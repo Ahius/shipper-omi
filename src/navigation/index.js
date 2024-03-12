@@ -66,8 +66,8 @@ export default function AppNavigation() {
   }
 
   return (
-    <NavigationContainer>
+
       <MyTabs />
-    </NavigationContainer>
+
   );
 }
