@@ -1,14 +1,86 @@
 
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { login } from '../redux/actions/authSlice';
+import axios from 'axios';
+
 
 const Login = ({ navigation }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    // const dispatch = useDispatch();
+    const [credentials, setCredentials] = useState({ Phone: '', Password: '' });
+    // console.log("data", credentials.Phone, credentials.Password);
+
+
+    async function loginUser(phone, password) {
+        try {
+            const response = await axios.post('https://onlinemarket-api.nguyenminhhai.us/api/v1/shipper?action=login', {
+                Phone: phone,
+                Password: password
+            });
+
+            console.log('Dữ liệu đăng nhập:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Đã xảy ra lỗi:', error);
+            throw error;
+        }
+    }
 
     const handleLogin = () => {
-        navigation.navigate('AppNavigation')
-    };
+        loginUser(credentials.Phone, credentials.Password)
+            .then(data => {
+                navigation.navigate('AppNavigation');
+                console.log('Đăng nhập thành công:', data);
+            })
+            .catch(error => {
+                console.error('Đã xảy ra lỗi khi đăng nhập:', error);
+            });
+    }
+
+    // const handleLogin = () => {
+    //     dispatch(login(credentials))
+    //         .then((response) => {
+    //             // console.log('Login successful:', response);
+    //             if (response.status === 200) {
+    //                 console.log('Login successful:', response);
+    //                 navigation.navigate('AppNavigation');
+    //             } else {
+    //                 console.error('Login error:', response);
+    //                 // Handle other status codes if needed
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.error('Login error:', error.response.statusText);
+    //             // Handle other error scenarios if needed
+    //         });
+    // };
+
+
+
+
+
+    // const handleLogin = () => {
+    //     dispatch(login(credentials))
+    //         .then((response) => {
+    //             // console.log('Login successful:', response);
+    //             if (response.status === 200) {
+    //                 console.log('Login successful:', response);
+    //                 navigation.navigate('AppNavigation');
+
+    //             } else {
+    //                 // console.error('Login error:', response);
+    //                 // Handle other status codes if needed
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.error('Login error:', error.response.statusText);
+    //             // Handle other error scenarios if needed
+    //         });
+    // };
+
+
+
 
 
 
@@ -23,21 +95,38 @@ const Login = ({ navigation }) => {
                     <View style={styles.container}>
                         <View style={styles.formContainer}>
                             <Text style={styles.text}>Đăng nhập</Text>
-                            <TextInput
+                            {/* <TextInput
                                 style={styles.input}
-                                placeholder="Nhập Email"
+                                placeholder="Nhập Số Điện Thoại"
                                 keyboardType="email-address"
                                 autoCapitalize="none"
-                                value={email}
-                                onChangeText={setEmail}
+                                value={credentials.Phone}
+                                onChangeText={(e) => setCredentials({ ...credentials, Phone: e.target.value })}
                             />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Nhập mật khẩu"
                                 secureTextEntry
-                                value={password}
-                                onChangeText={setPassword}
+                                value={credentials.Password}
+                                onChangeText={(e) => setCredentials({ ...credentials, Password: e.target.value })}
+                            /> */}
+
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Nhập Số Điện Thoại"
+                                keyboardType="phone-pad" // Change to 'phone-pad' for phone numbers
+                                autoCapitalize="none"
+                                value={credentials.Phone}
+                                onChangeText={(text) => setCredentials({ ...credentials, Phone: text })}
                             />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Nhập mật khẩu"
+                                secureTextEntry
+                                value={credentials.Password}
+                                onChangeText={(text) => setCredentials({ ...credentials, Password: text })}
+                            />
+
                             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                                 <Text style={styles.buttonText}>Đăng nhập</Text>
                             </TouchableOpacity>
