@@ -1,30 +1,44 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Feather";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/actions/authSlice";
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function HomeTab() {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const handleLogout = () => {
+    dispatch(logout());
+    console.log('Logged out successfully');
+    navigation.navigate('Login');
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{alignItems: "center", marginVertical: 80}}>
-
-        <Text style={[styles.themeText, {color: "#fff"}]}>Track your shipment</Text>
-        <Text style={{color: "#fff"}}>Keep track of your goods with us</Text>
-
-        <View style={styles.searchBox}>
-          <TextInput
-            placeholder="Number Tracking"
-            clearButtonMode="always"
-            style={styles.searchBar}
-          />
-          <View style={styles.searchIcon}>
-            <Icon name="search" size={20} color="#000" />
+        <View style={{ position: 'absolute', top: 40, right: 10 }}>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Đăng xuất</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ alignItems: "center", marginVertical: 40 }}>
+          <Text style={[styles.themeText, { color: "#fff" }]}>Track your shipment</Text>
+          <Text style={{ color: "#fff" }}>Keep track of your goods with us</Text>
+          <View style={styles.searchBox}>
+            <TextInput
+              placeholder="Number Tracking"
+              clearButtonMode="always"
+              style={styles.searchBar}
+            />
+            <View style={styles.searchIcon}>
+              <Icon name="search" size={20} color="#000" />
+            </View>
           </View>
         </View>
-        </View>
       </View>
-      
+
       <View style={styles.center}>
         <Text style={styles.themeText}>Order Service</Text>
         <View style={styles.orderContainer}>
@@ -50,7 +64,7 @@ export default function HomeTab() {
           <Text style={styles.themeText}>Recently Tracking</Text>
         </View>
 
-        <View style={[styles.trackingBox, {marginTop: 20}]}>
+        <View style={[styles.trackingBox, { marginTop: 20 }]}>
           <View style={styles.orderContainer}>
             <Icon name="shipping-fast" size={25} color={"#fff"}>
               <Text style={styles.trackingText}>
@@ -62,18 +76,20 @@ export default function HomeTab() {
           <View style={styles.trackingContent}>
             <View>
 
-            <Text style={{fontWeight: "bold", color: "#fff"}} >Track Number</Text>
-            <Text style={styles.trackingText}>232-444-230</Text>
+              <Text style={{ fontWeight: "bold", color: "#fff" }} >Track Number</Text>
+              <Text style={styles.trackingText}>232-444-230</Text>
             </View>
 
             <View>
 
-            <Text style={{fontWeight: "bold", color: "#fff"}}>Address</Text>
-            <Text style={styles.trackingText}>HCM, Vietnam</Text>
+              <Text style={{ fontWeight: "bold", color: "#fff" }}>Address</Text>
+              <Text style={styles.trackingText}>HCM, Vietnam</Text>
             </View>
           </View>
         </View>
+
       </View>
+
 
       {/* <View style={styles.footer}>
         <View style={styles.navigateBar}>
@@ -178,7 +194,7 @@ const styles = StyleSheet.create({
   },
 
   trackingText: {
-    fontSize: 15, 
+    fontSize: 15,
     color: "#fff"
   },
 
@@ -186,6 +202,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 10,
     paddingBottom: 20
+  },
+
+  logoutButton: {
+    backgroundColor: '#ff0000',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+
+
+  logoutButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 
 });
