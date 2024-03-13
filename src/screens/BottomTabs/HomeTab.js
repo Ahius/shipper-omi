@@ -3,8 +3,8 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-nativ
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Feather";
 import { useDispatch } from "react-redux";
-import { logout } from "../../redux/actions/authSlice";
 import { useNavigation } from "@react-navigation/native";
+import { logout } from "../../redux/reducers/authSlice";
 
 
 export default function HomeTab() {

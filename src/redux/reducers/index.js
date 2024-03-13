@@ -1,11 +1,12 @@
 // reducers/index.js
 
 import { combineReducers } from 'redux';
-import authSlice from '../actions/authSlice';
+import authSlice from './authSlice';
+import areaSlice from './areaSlice';
 
 const rootReducer = combineReducers({
   auth: authSlice,
-  // Thêm reducers khác nếu có
+  area: areaSlice,
 });
 
 export default rootReducer;
