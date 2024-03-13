@@ -1,116 +1,52 @@
-
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
-import { useDispatch } from 'react-redux';
 import { login } from '../redux/actions/authSlice';
-import axios from 'axios';
-
-
+import { useDispatch } from 'react-redux';
 const Login = ({ navigation }) => {
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
+
     const [credentials, setCredentials] = useState({ Phone: '', Password: '' });
     // console.log("data", credentials.Phone, credentials.Password);
-
-
-    async function loginUser(phone, password) {
-        try {
-            const response = await axios.post('https://onlinemarket-api.nguyenminhhai.us/api/v1/shipper?action=login', {
-                Phone: phone,
-                Password: password
-            });
-
-            console.log('Dữ liệu đăng nhập:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Đã xảy ra lỗi:', error);
-            throw error;
-        }
-    }
+    const [error, setError] = useState(null);
+    const handleRegister = () => {
+        navigation.navigate('Register');
+    };
 
     const handleLogin = () => {
-        loginUser(credentials.Phone, credentials.Password)
-            .then(data => {
-                navigation.navigate('AppNavigation');
-                console.log('Đăng nhập thành công:', data);
+        dispatch(login(credentials))
+            .then((response) => {
+                if (response && response.payload) {
+                    if (response.payload.msg === "Login succesfully") {
+                        navigation.navigate('AppNavigation');
+                    } else {
+                        setError('Đăng nhập không thành công. Vui lòng thử lại.');
+                        console.error('Error occurred while logging in:', response.payload.error);
+                    }
+                } else {
+                    setError('Đã xảy ra lỗi trong quá trình đăng nhập.');
+                    console.error('Error occurred while logging in:', response);
+                }
             })
-            .catch(error => {
-                console.error('Đã xảy ra lỗi khi đăng nhập:', error);
+            .catch((error) => {
+                setError('Đã xảy ra lỗi trong quá trình đăng nhập.');
+                console.error('Error occurred while logging in:', error);
             });
-    }
-
-    // const handleLogin = () => {
-    //     dispatch(login(credentials))
-    //         .then((response) => {
-    //             // console.log('Login successful:', response);
-    //             if (response.status === 200) {
-    //                 console.log('Login successful:', response);
-    //                 navigation.navigate('AppNavigation');
-    //             } else {
-    //                 console.error('Login error:', response);
-    //                 // Handle other status codes if needed
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error('Login error:', error.response.statusText);
-    //             // Handle other error scenarios if needed
-    //         });
-    // };
-
-
-
-
-
-    // const handleLogin = () => {
-    //     dispatch(login(credentials))
-    //         .then((response) => {
-    //             // console.log('Login successful:', response);
-    //             if (response.status === 200) {
-    //                 console.log('Login successful:', response);
-    //                 navigation.navigate('AppNavigation');
-
-    //             } else {
-    //                 // console.error('Login error:', response);
-    //                 // Handle other status codes if needed
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error('Login error:', error.response.statusText);
-    //             // Handle other error scenarios if needed
-    //         });
-    // };
-
-
+    };
 
 
 
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={styles.topBackground}>
-                <ImageBackground source={{ uri: 'https://i.pinimg.com/564x/bf/be/1c/bfbe1c895b7915a608344511fe13fdba.jpg' }} style={styles.backgroundImage}></ImageBackground>
-            </View>
 
+            <View style={styles.topBackground}>
+                <ImageBackground source={{ uri: 'https://i.pinimg.com/.../bfbe1c895b7915a608344511fe13fdba...' }} style={styles.backgroundImage}></ImageBackground>
+            </View>
             <View style={styles.middleContainer}>
-                <ImageBackground source={{ uri: 'https://i.pinimg.com/564x/eb/aa/50/ebaa506bb2ca7ba89cacb10ec426e96a.jpg' }} style={styles.middleBackground}>
+                <ImageBackground source={{ uri: 'https://i.pinimg.com/.../ebaa506bb2ca7ba89cacb10ec426e96a...' }} style={styles.middleBackground}>
                     <View style={styles.container}>
                         <View style={styles.formContainer}>
                             <Text style={styles.text}>Đăng nhập</Text>
-                            {/* <TextInput
-                                style={styles.input}
-                                placeholder="Nhập Số Điện Thoại"
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                value={credentials.Phone}
-                                onChangeText={(e) => setCredentials({ ...credentials, Phone: e.target.value })}
-                            />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Nhập mật khẩu"
-                                secureTextEntry
-                                value={credentials.Password}
-                                onChangeText={(e) => setCredentials({ ...credentials, Password: e.target.value })}
-                            /> */}
-
                             <TextInput
                                 style={styles.input}
                                 placeholder="Nhập Số Điện Thoại"
@@ -126,9 +62,12 @@ const Login = ({ navigation }) => {
                                 value={credentials.Password}
                                 onChangeText={(text) => setCredentials({ ...credentials, Password: text })}
                             />
-
                             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                                 <Text style={styles.buttonText}>Đăng nhập</Text>
+                            </TouchableOpacity>
+                            {error && <Text style={{ color: 'red' }}>{error}</Text>}
+                            <TouchableOpacity onPress={handleRegister}>
+                                <Text>Register</Text>
                             </TouchableOpacity>
                             <View style={styles.forgotPasswordContainer}>
                                 <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
@@ -137,21 +76,19 @@ const Login = ({ navigation }) => {
                     </View>
                 </ImageBackground>
             </View>
-
             <View style={styles.footer}>
                 <Text style={styles.footerText}>© 2024 Your App</Text>
             </View>
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     topBackground: {
         flex: 0.1,
-        marginBottom: 10, // Add margin bottom to create space
+        marginBottom: 10,
     },
     middleContainer: {
-        flex: 0.9, // Adjust the flex to take the desired space between the backgrounds
+        flex: 0.9,
     },
     backgroundImage: {
         flex: 1,
@@ -170,7 +107,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     formContainer: {
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.😎',
         padding: 20,
         borderRadius: 10,
         borderWidth: 1,
@@ -210,12 +147,10 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 2,
         right: 20,
-
     },
     forgotPasswordText: {
         color: '#4B9AD1',
     },
-
     footer: {
         backgroundColor: '#DA5628',
         padding: 20,
@@ -226,5 +161,4 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
 });
-
 export default Login;
