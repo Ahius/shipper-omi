@@ -4,14 +4,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const profileUser = createAsyncThunk(
   "user/profile",
-  async ( payload, { rejectWithValue }) => {
-    const { ShipperId } = payload;
+  async ( { ShipperId }, { rejectWithValue }) => {
     try {
-      const token = await AsyncStorage.getItem('token'); // Await AsyncStorage.getItem()
-      if (!token) {
-        console.log("Can't get Token");
-        // You might want to return here if token is not available
-      }
+      const token = await AsyncStorage.getItem('token'); 
       const response = await axios.get(
         `https://onlinemarket-api.nguyenminhhai.us/api/v1/shipper/${ShipperId}`,
         {
@@ -24,7 +19,6 @@ export const profileUser = createAsyncThunk(
       console.log(response.data);
       return response.data;
     } catch (error) {
-      // Reject with value for rejection with payload
       return rejectWithValue(error.response.data);
     }
   }
@@ -33,7 +27,7 @@ export const profileUser = createAsyncThunk(
 const userSlice = createSlice({
     name: "user",
     initialState: {
-      shipper: null, // Initial state for shipper data
+      data: null, // Initial state for shipper data
       loading: false,
       error: null,
     },
@@ -45,16 +39,15 @@ const userSlice = createSlice({
     extraReducers(builder) {
       builder
         .addCase(profileUser.pending, (state) => {
-          state.loading = true;
+          state.status = 'loading';
         })
         .addCase(profileUser.fulfilled, (state, action) => {
-          state.loading = false;
-          state.shipper = action.payload; // Update shipper data
-          state.error = null; // Clear error on successful fetch
+          state.status = 'succeeded';
+          state.data = action.payload;
         })
         .addCase(profileUser.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload.message;
+          state.status = 'failed';
+          state.error = action.payload;
         });
     },
   });

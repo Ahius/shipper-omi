@@ -1,39 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { images } from '../../../constants';
-import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from "react";
+import { View, Text, Image } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { images } from "../../../constants";
+import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
-
-import { profileUser } from '../../redux/reducers/userSlice';
+import { profileUser } from "../../redux/reducers/userSlice";
 
 export default function ProfileTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const dispatch = useDispatch()
-  const shipperId = useSelector((state) => state.auth.shipperId)
-  const shipperData = useSelector((state) => state.user.shipper)
-  console.log(shipperId);
-  
+  const dispatch = useDispatch();
+  const shipperId = useSelector((state) => state.auth.shipperId);
+  const shipperData = useSelector((state) => state.user.data);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if(shipperId) {
-          // Dispatch with correct payload
-          dispatch(profileUser({ShipperId: shipperId}));
+        if (shipperId) {
+          setIsLoading(true);
+          await dispatch(profileUser({ ShipperId: shipperId }));
+          setIsLoading(false);
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
-        setError(error);
+        setIsLoading(false);
+        setError(error.message);
       }
-    }
-    fetchData()
-  }, [dispatch, shipperId])
-  console.log(shipperData);
+    };
+
+    fetchData();
+  }, [dispatch, shipperId]);
+
   if (isLoading) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <StatusBar style="auto" />
         <Text>Loading...</Text>
       </SafeAreaView>
@@ -42,7 +44,9 @@ export default function ProfileTab() {
 
   if (error) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <StatusBar style="auto" />
         <Text>Error: {error}</Text>
       </SafeAreaView>
@@ -51,7 +55,9 @@ export default function ProfileTab() {
 
   if (!shipperData) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <StatusBar style="auto" />
         <Text>No user data found</Text>
       </SafeAreaView>
@@ -59,17 +65,17 @@ export default function ProfileTab() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <StatusBar style="auto" />
-      <View style={{ width: '100%' }}>
+      <View style={{ width: "100%" }}>
         <Image
           source={images.cover}
           resizeMode="cover"
-          style={{ height: 228, width: '100%' }}
+          style={{ height: 228, width: "100%" }}
         />
       </View>
 
-      <View style={{ flex: 1, alignItems: 'center' }}>
+      <View style={{ flex: 1, alignItems: "center" }}>
         <Image
           source={images.shipperImg}
           resizeMode="contain"
@@ -77,14 +83,16 @@ export default function ProfileTab() {
             height: 155,
             width: 155,
             borderRadius: 999,
-            borderColor: '#ccc',
+            borderColor: "#ccc",
             borderWidth: 2,
             marginTop: -90,
           }}
         />
         {shipperData && (
           <View>
-            <Text style={{ marginVertical: 8, fontWeight: 'bold' }}>{shipperData.Name}</Text>
+            <Text style={{ marginVertical: 8, fontWeight: "bold" }}>
+              {shipperData.Name}
+            </Text>
             <Text>Email: {shipperData.Email}</Text>
             <Text>Phone: {shipperData.Phone}</Text>
             <Text>Gender: {shipperData.Gender}</Text>
