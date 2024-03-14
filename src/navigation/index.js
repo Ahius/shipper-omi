@@ -11,7 +11,6 @@ import ProfileTab from "../screens/BottomTabs/ProfileTab";
 const Tab = createBottomTabNavigator();
 
 export default function AppNavigation() {
-  function MyTabs() {
     return (
       <Tab.Navigator>
         <Tab.Screen
@@ -19,7 +18,7 @@ export default function AppNavigation() {
           component={HomeTab}
           options={{
             headerShown: false,
-            tabBarLabel: "Home",
+            tabBarLabel: "Trang chủ",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),
@@ -31,7 +30,7 @@ export default function AppNavigation() {
           component={PackageTab}
           options={{
             headerShown: false,
-            tabBarLabel: "Package",
+            tabBarLabel: "Đơn hàng",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="package" color={color} size={26} />
             ),
@@ -43,7 +42,7 @@ export default function AppNavigation() {
           component={HistoryTab}
           options={{
             headerShown: false,
-            tabBarLabel: "History",
+            tabBarLabel: "Lịch Sử",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="history" color={color} size={26} />
             ),
@@ -55,7 +54,7 @@ export default function AppNavigation() {
           component={ProfileTab}
           options={{
             headerShown: false,
-            tabBarLabel: "Profile",
+            tabBarLabel: "Tôi",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="account" color={color} size={26} />
             ),
@@ -63,11 +62,4 @@ export default function AppNavigation() {
         />
       </Tab.Navigator>
     );
-  }
-
-  return (
-
-      <MyTabs />
-
-  );
 }
