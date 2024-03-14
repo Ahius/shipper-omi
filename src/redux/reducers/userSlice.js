@@ -4,7 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const profileUser = createAsyncThunk(
   "user/profile",
-  async (ShipperId, { rejectWithValue }) => {
+  async ( payload, { rejectWithValue }) => {
+    const { ShipperId } = payload;
     try {
       const token = await AsyncStorage.getItem('token'); // Await AsyncStorage.getItem()
       if (!token) {

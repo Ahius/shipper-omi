@@ -19,6 +19,7 @@ const Login = ({ navigation }) => {
                 if (response && response.payload) {
                     if (response.payload.msg === "Login succesfully") {
                         navigation.navigate('AppNavigation');
+                        console.log("data", response);
                     } else {
                         setError('Đăng nhập không thành công. Vui lòng thử lại.');
                         console.error('Error occurred while logging in:', response.payload.error);

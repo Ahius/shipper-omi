@@ -12,22 +12,25 @@ export default function ProfileTab() {
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch()
-  const shipperData = useSelector((state) => state.user.initialState)
-  console.log("Shipper: ", ShipperId);
-
+  const shipperId = useSelector((state) => state.auth.shipperId)
+  const shipperData = useSelector((state) => state.user.shipper)
+  console.log(shipperId);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if(ShipperId) {
-          await dispatch(profileUser(ShipperId))
+        if(shipperId) {
+          // Dispatch with correct payload
+          dispatch(profileUser({ShipperId: shipperId}));
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
+        setError(error);
       }
     }
     fetchData()
-  }, [dispatch, ShipperId])
-
+  }, [dispatch, shipperId])
+  console.log(shipperData);
   if (isLoading) {
     return (
       <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -79,14 +82,18 @@ export default function ProfileTab() {
             marginTop: -90,
           }}
         />
-        <Text style={{ marginVertical: 8, fontWeight: 'bold' }}>{shipperData.shipper.Name}</Text>
-        <Text>Email: {shipperData.shipper.Email}</Text>
-        <Text>Phone: {shipperData.shipper.Phone}</Text>
-        <Text>Gender: {shipperData.shipper.Gender}</Text>
-        <Text>CCCD: {shipperData.shipper.CCCD}</Text>
-        <Text>Status: {shipperData.shipper.Status}</Text>
-        <Text>Area: {shipperData.shipper.AreaName}</Text>
-        <Text>Balance: {shipperData.shipper.Balance}</Text>
+        {shipperData && (
+          <View>
+            <Text style={{ marginVertical: 8, fontWeight: 'bold' }}>{shipperData.Name}</Text>
+            <Text>Email: {shipperData.Email}</Text>
+            <Text>Phone: {shipperData.Phone}</Text>
+            <Text>Gender: {shipperData.Gender}</Text>
+            <Text>CCCD: {shipperData.CCCD}</Text>
+            <Text>Status: {shipperData.Status}</Text>
+            <Text>Area: {shipperData.AreaName}</Text>
+            <Text>Balance: {shipperData.Balance}</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
