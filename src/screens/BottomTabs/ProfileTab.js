@@ -3,38 +3,30 @@ import { View, Text, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../../constants';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import jwtDecode from 'jwt-decode'; // Import jwt-decode
+import { useDispatch, useSelector } from "react-redux";
+
+import { profileUser } from '../../redux/reducers/userSlice';
 
 export default function ProfileTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [shipperData, setShipperData] = useState(null);
+
+  const dispatch = useDispatch()
+  const shipperData = useSelector((state) => state.user.initialState)
+  console.log("Shipper: ", ShipperId);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) {
-          throw new Error('Token not found in AsyncStorage');
+        if(ShipperId) {
+          await dispatch(profileUser(ShipperId))
         }
-        // Ensure jwtDecode is defined and is a function
-        if (typeof jwtDecode !== 'function') {
-          throw new Error('jwtDecode is not a function');
-        }
-        const decodedToken = jwtDecode(token); // Use jwt-decode
-        setShipperData(decodedToken);
-        console.log("Shipper: ", decodedToken);
-        setIsLoading(false);
       } catch (error) {
-        console.error('Error retrieving token:', error);
-        setError(error.message);
-        setIsLoading(false);
+        console.error('Error fetching profile:', error);
       }
-    };
-
-    fetchUserData();
-  }, []);
+    }
+    fetchData()
+  }, [dispatch, ShipperId])
 
   if (isLoading) {
     return (
