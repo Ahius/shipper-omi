@@ -19,6 +19,21 @@ export const FetchshipperOrders = createAsyncThunk('shipper/fetchOders', async (
 });
 
 
+// export const FetchshipperOrders = createAsyncThunk('shipper/fetchOders', async ({ ShipperId, Status }, { rejectWithValue }) => {
+//     try {
+//         const token = AsyncStorage.getItem('token');
+//         const response = await axios.get(`https://onlinemarket-api.nguyenminhhai.us/api/v1/customer-order/shipper/${ShipperId}?Status=${Status}`, {
+//             headers: {
+//                 Authorization: `Bearer ${token}`
+//             },
+//         });
+//         return response.data
+//     } catch (error) {
+//         return rejectWithValue(error.response.data);
+//     }
+// });
+
+
 const shipperSlice = createSlice({
     name: 'shipperOder',
     initialState: {
