@@ -10,7 +10,7 @@ export default function ProfileTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [shipperData, setShipperData] = useState(null);
-
+console.log("data ship", shipperData);
   useEffect(() => {
     const fetchUserData = async () => {
       try {
