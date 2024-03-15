@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { FetchshipperOrders } from '../../redux/reducers/shipperHistorySlice';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const HistoryTab = () => {
@@ -21,11 +23,25 @@ const HistoryTab = () => {
   console.log('shipper his', shipperOrders);
 
   if (!Array.isArray(shipperOrders)) {
-    return <Text>Loading...</Text>;
+    return (
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <StatusBar style="auto" />
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
   }
 
   if (shipperOrders.length === 0) {
-    return <Text>No orders to display</Text>;
+    return (
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <StatusBar style="auto" />
+        <Text>No orders to display</Text>
+      </SafeAreaView>
+    );
   }
 
   return (
