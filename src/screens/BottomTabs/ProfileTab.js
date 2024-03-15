@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../../constants";
 import { StatusBar } from "expo-status-bar";
@@ -9,13 +9,26 @@ import { Caption, Title } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import IonIcon from "react-native-vector-icons/Ionicons";
 
-export default function ProfileTab() {
+export default function ProfileTab({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
   const shipperId = useSelector((state) => state.auth.shipperId);
   const shipperData = useSelector((state) => state.user.data);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Icon
+          name="account-edit" size={25}
+          onPress={() => navigation.navigate('EditProfile')}
+          title="Edit"
+          color="#007AFF"
+        />
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,7 +83,7 @@ export default function ProfileTab() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <StatusBar style="auto" />
-      <View style={{ width: "100%" }}>
+      <View style={{ width: "100%",position: 'absolute' }}>
         <Image
           source={images.cover}
           resizeMode="cover"
@@ -78,7 +91,7 @@ export default function ProfileTab() {
         />
       </View>
 
-      <View style={{ flex: 1, alignItems: "center" }}>
+      <View style={{ flex: 1, alignItems: "center"}}>
         <Image
           source={images.shipperImg}
           resizeMode="contain"
@@ -88,7 +101,7 @@ export default function ProfileTab() {
             borderRadius: 999,
             borderColor: "#ccc",
             borderWidth: 2,
-            marginTop: -90,
+            marginTop: 90,
           }}
         />
       </View>
@@ -126,19 +139,10 @@ export default function ProfileTab() {
             </View>
 
           <View style={styles.menuWrapper}>
-        <View style={styles.menuItem}>
-          <Icon name="heart-outline" size={25} />
-          <Text style={styles.menuItemText}>Your Favorites</Text>
-        </View>
 
         <View style={styles.menuItem}>
           <Icon name="credit-card" size={25} />
           <Text style={styles.menuItemText}>Payment</Text>
-        </View>
-
-        <View style={styles.menuItem}>
-          <Icon name="share-outline" size={25} />
-          <Text style={styles.menuItemText}>Tell Your Friends</Text>
         </View>
 
         <View style={styles.menuItem}>
@@ -200,7 +204,7 @@ const styles = StyleSheet.create({
 
   menuItem: {
     flexDirection: "row",
-    paddingVertical: 15,
+    paddingVertical: 25,
     
   },
 

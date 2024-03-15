@@ -2,13 +2,32 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeTab from "../screens/BottomTabs/HomeTab";
 import PackageTab from "../screens/BottomTabs/PackageTab";
 import HistoryTab from "../screens/BottomTabs/HistoryTab";
 import ProfileTab from "../screens/BottomTabs/ProfileTab";
+import EditProfileTab from "../screens/BottomTabs/EditProfileTab";
 
 const Tab = createBottomTabNavigator();
+const ProfileStack = createNativeStackNavigator();
+
+const ProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen
+      name="Hồ sơ người dùng"
+      component={ProfileTab}
+      options={{}}
+    />
+    <ProfileStack.Screen
+      name="EditProfile"
+      component={EditProfileTab}
+      options={{ title: "Chỉnh sửa thông tin người dùng",
+     }}
+    />
+  </ProfileStack.Navigator>
+);
 
 export default function AppNavigation() {
     return (
@@ -51,7 +70,7 @@ export default function AppNavigation() {
 
         <Tab.Screen
           name="Profile"
-          component={ProfileTab}
+          component={ProfileStackScreen}
           options={{
             headerShown: false,
             tabBarLabel: "Tôi",
