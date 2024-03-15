@@ -6,6 +6,7 @@ import store from "./src/redux/store/store";
 import { Provider } from "react-redux";
 import RegisterForm from "./src/screens/Register";
 import OrderDetail from "./src/screens/BottomTabs/OrderDetail";
+import PackageTab from "./src/screens/BottomTabs/PackageTab";
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         <Stack.Screen name="AppNavigation" component={AppNavigation} />
         <Stack.Screen name="Register" component={RegisterForm} />
         <Stack.Screen name="OrderDetail" component={OrderDetail} />
+        <Stack.Screen name="Package" component={PackageTab} />
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>
