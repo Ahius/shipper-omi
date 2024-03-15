@@ -3,8 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 
 
+
+
 import { FetchshipperOrders } from '../../redux/reducers/shipperHistorySlice';
 import { ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const HistoryTab = () => {
   const dispatch = useDispatch();
@@ -25,9 +28,38 @@ const HistoryTab = () => {
     setSelectedStatus(status);
   };
 
+  const navigation = useNavigation();
+
+  const handleOrderPress = (orderId) => {
+    navigation.navigate('OrderDetail', { orderId });
+  };
+
   if (!Array.isArray(shipperOrders)) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
+
+// =======
+//     return (
+//       <SafeAreaView
+//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+//       >
+//         <StatusBar style="auto" />
+//         <Text>Loading...</Text>
+//       </SafeAreaView>
+//     );
+//   }
+
+//   if (shipperOrders.length === 0) {
+//     return (
+//       <SafeAreaView
+//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+//       >
+//         <StatusBar style="auto" />
+//         <Text>No orders to display</Text>
+//       </SafeAreaView>
+//     );
+//   }
+// >>>>>>> e5461d6655a574e0abda073bcaabd4e8afa12c98
 
   return (
     <View style={styles.container}>
@@ -46,7 +78,8 @@ const HistoryTab = () => {
       </View>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {shipperOrders.length > 0 ? (shipperOrders.map(order => (
-          <TouchableOpacity key={order.CustomerOrderId} style={styles.card}>
+          // <TouchableOpacity key={order.CustomerOrderId} style={styles.card}>
+          <TouchableOpacity key={order.CustomerOrderId} style={styles.card} onPress={() => handleOrderPress(order.CustomerOrderId)}>
             <Image source={require('../../../assets/images/image-history-orders.jpg')} style={styles.image} />
 
             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, color: '#62BEB0' }}>Tòa nhà: {order.BuildingName}</Text>

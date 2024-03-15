@@ -1,44 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { images } from '../../../constants';
-import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import jwtDecode from 'jwt-decode'; // Import jwt-decode
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { images } from "../../../constants";
+import { StatusBar } from "expo-status-bar";
+import { useDispatch, useSelector } from "react-redux";
+import { profileUser } from "../../redux/reducers/userSlice";
+import { Caption, Title } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import IonIcon from "react-native-vector-icons/Ionicons";
 
 export default function ProfileTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [shipperData, setShipperData] = useState(null);
-console.log("data ship", shipperData);
+
+  const dispatch = useDispatch();
+  const shipperId = useSelector((state) => state.auth.shipperId);
+  const shipperData = useSelector((state) => state.user.data);
+
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) {
-          throw new Error('Token not found in AsyncStorage');
+        if (shipperId) {
+          setIsLoading(true);
+          await dispatch(profileUser({ ShipperId: shipperId }));
+          setIsLoading(false);
         }
-        // Ensure jwtDecode is defined and is a function
-        if (typeof jwtDecode !== 'function') {
-          throw new Error('jwtDecode is not a function');
-        }
-        const decodedToken = jwtDecode(token); // Use jwt-decode
-        setShipperData(decodedToken);
-        console.log("Shipper: ", decodedToken);
-        setIsLoading(false);
       } catch (error) {
-        console.error('Error retrieving token:', error);
-        setError(error.message);
         setIsLoading(false);
+        setError(error.message);
       }
     };
 
-    fetchUserData();
-  }, []);
+    fetchData();
+  }, [dispatch, shipperId]);
 
   if (isLoading) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <StatusBar style="auto" />
         <Text>Loading...</Text>
       </SafeAreaView>
@@ -47,7 +47,9 @@ console.log("data ship", shipperData);
 
   if (error) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <StatusBar style="auto" />
         <Text>Error: {error}</Text>
       </SafeAreaView>
@@ -56,7 +58,9 @@ console.log("data ship", shipperData);
 
   if (!shipperData) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <StatusBar style="auto" />
         <Text>No user data found</Text>
       </SafeAreaView>
@@ -64,17 +68,17 @@ console.log("data ship", shipperData);
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <StatusBar style="auto" />
-      <View style={{ width: '100%' }}>
+      <View style={{ width: "100%" }}>
         <Image
           source={images.cover}
           resizeMode="cover"
-          style={{ height: 228, width: '100%' }}
+          style={{ height: 228, width: "100%" }}
         />
       </View>
 
-      <View style={{ flex: 1, alignItems: 'center' }}>
+      <View style={{ flex: 1, alignItems: "center" }}>
         <Image
           source={images.shipperImg}
           resizeMode="contain"
@@ -82,20 +86,129 @@ console.log("data ship", shipperData);
             height: 155,
             width: 155,
             borderRadius: 999,
-            borderColor: '#ccc',
+            borderColor: "#ccc",
             borderWidth: 2,
             marginTop: -90,
           }}
         />
-        <Text style={{ marginVertical: 8, fontWeight: 'bold' }}>{shipperData.shipper.Name}</Text>
-        <Text>Email: {shipperData.shipper.Email}</Text>
-        <Text>Phone: {shipperData.shipper.Phone}</Text>
-        <Text>Gender: {shipperData.shipper.Gender}</Text>
-        <Text>CCCD: {shipperData.shipper.CCCD}</Text>
-        <Text>Status: {shipperData.shipper.Status}</Text>
-        <Text>Area: {shipperData.shipper.AreaName}</Text>
-        <Text>Balance: {shipperData.shipper.Balance}</Text>
       </View>
+      {shipperData && (
+        <View style={styles.userInfoSection}>
+          <View style={{ alignItems: "center"}}>
+            <Text style={{ marginVertical: 8, fontWeight: "bold" }}>
+              {shipperData.Name}
+            </Text>
+            <Caption style={styles.caption}>{shipperData.Email}</Caption>
+          </View>
+
+          <View style={styles.userInfoSection}>
+            <View style={styles.row}>
+              <Icon name="phone" size={20} />
+              <Text style={styles.userInfoText}>{shipperData.Phone}</Text>
+            </View>
+
+            <View style={styles.row}>
+              <Icon name="human-male-female" size={20} />
+              <Text style={styles.userInfoText}> {shipperData.Gender}</Text>
+            </View>
+
+            <View style={styles.row}>
+              <Icon name="map-marker-radius" size={20} />
+              <Text style={styles.userInfoText}> {shipperData.AreaName}</Text>
+            </View>
+          </View>
+
+          <View style={styles.infoBoxWrapper}>
+              <View style={styles.infoBox}>
+                <Title>{shipperData.Balance}</Title>
+                <Caption> Điểm tín dụng</Caption>
+              </View>
+            </View>
+
+          <View style={styles.menuWrapper}>
+        <View style={styles.menuItem}>
+          <Icon name="heart-outline" size={25} />
+          <Text style={styles.menuItemText}>Your Favorites</Text>
+        </View>
+
+        <View style={styles.menuItem}>
+          <Icon name="credit-card" size={25} />
+          <Text style={styles.menuItemText}>Payment</Text>
+        </View>
+
+        <View style={styles.menuItem}>
+          <Icon name="share-outline" size={25} />
+          <Text style={styles.menuItemText}>Tell Your Friends</Text>
+        </View>
+
+        <View style={styles.menuItem}>
+          <Icon name="account-check-outline" size={25} />
+          <Text style={styles.menuItemText}>Support</Text>
+        </View>
+
+        <View style={styles.menuItem}>
+          <IonIcon name="settings-outline" size={25} />
+          <Text style={styles.menuItemText}>Settings</Text>
+        </View>
+      </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+
+  caption: {
+    fontSize: 14,
+    lineHeight: 14,
+    fontWeight: "500",
+  },
+
+  userInfoSection: {
+   marginTop: 10,
+   marginLeft: 10
+    
+  },
+
+  row: {
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+
+  userInfoText: {
+    marginLeft: 10,
+  },
+
+  infoBoxWrapper: {
+    marginVertical: 10,
+    marginRight: 10,
+    borderBottomColor: "#dddddd",
+    borderBottomWidth: 1,
+    borderTopColor: "#dddddd",
+    borderTopWidth: 1,
+    width: "98%",
+    height: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  infoBox: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  menuItem: {
+    flexDirection: "row",
+    paddingVertical: 15,
+    
+  },
+
+  menuItemText: {
+    color: "#777777",
+    marginLeft: 20,
+    fontWeight: "600",
+    fontSize: 16,
+    lineHeight: 26,
+  },
+});
