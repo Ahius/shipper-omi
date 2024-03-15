@@ -9,6 +9,7 @@ import PackageTab from "../screens/BottomTabs/PackageTab";
 import HistoryTab from "../screens/BottomTabs/HistoryTab";
 import ProfileTab from "../screens/BottomTabs/ProfileTab";
 import EditProfileTab from "../screens/BottomTabs/EditProfileTab";
+import { useSelector } from "react-redux";
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createNativeStackNavigator();
@@ -30,6 +31,9 @@ const ProfileStackScreen = () => (
 );
 
 export default function AppNavigation() {
+
+  const shipperOrders = useSelector(state => state.shipperOder.data);
+  console.log('data pack:', shipperOrders);
     return (
       <Tab.Navigator>
         <Tab.Screen
@@ -49,9 +53,9 @@ export default function AppNavigation() {
           component={PackageTab}
           options={{
             headerShown: false,
-            tabBarLabel: "Đơn hàng",
+            tabBarLabel: "Thông báo",
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="package" color={color} size={26} />
+              <MaterialCommunityIcons name="history" color={color} size={26} />
             ),
           }}
         />
@@ -61,9 +65,10 @@ export default function AppNavigation() {
           component={HistoryTab}
           options={{
             headerShown: false,
-            tabBarLabel: "Lịch Sử",
+            // tabBarLabel: "Lịch Sử",
+            tabBarLabel: "Đơn hàng",
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="history" color={color} size={26} />
+              <MaterialCommunityIcons name="package" color={color} size={26} />
             ),
           }}
         />

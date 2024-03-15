@@ -18,15 +18,15 @@ const Login = ({ navigation }) => {
             .then((response) => {
                 if (response && response.payload) {
                     if (response.payload.msg === "Login succesfully") {
+                        setError(null);
                         navigation.navigate('AppNavigation');
-                        console.log("data", response);
+                        // console.log('logogog: ', response.payload);
                     } else {
-                        setError('Đăng nhập không thành công. Vui lòng thử lại.');
-                        console.error('Error occurred while logging in:', response.payload.error);
+                        setError('Đã xảy ra lỗi trong quá trình đăng nhập.');
                     }
                 } else {
-                    setError('Đã xảy ra lỗi trong quá trình đăng nhập.');
                     console.error('Error occurred while logging in:', response);
+                    setError('Đã xảy ra lỗi trong quá trình đăng nhập.');
                 }
             })
             .catch((error) => {
@@ -62,15 +62,12 @@ const Login = ({ navigation }) => {
                     <TouchableOpacity style={styles.button} onPress={handleLogin}>
                         <Text style={styles.buttonText}>Đăng nhập</Text>
                     </TouchableOpacity>
-                    {error && <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>}
+                    {error && <Text style={styles.errorText}>{error}</Text>}
                     <TouchableOpacity onPress={handleRegister}>
                         <Text style={{ marginTop: 10, color: '#DA5628', textAlign: 'center' }}>Đăng ký</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-            {/* <View style={styles.footer}>
-                <Text style={styles.footerText}>© 2024 Your App</Text>
-            </View> */}
             <ImageBackground source={{ uri: 'https://t4.ftcdn.net/jpg/04/19/98/19/360_F_419981971_jftDSPRJGskIgVirQqtKLItcFdEZ4Zve.jpg' }} style={styles.topBackground2}>
                 {/* <View style={styles.overlay}></View> */}
             </ImageBackground>
@@ -146,15 +143,9 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
     },
-    // footer: {
-    //     backgroundColor: '#DA5628',
-    //     padding: 20,
-    //     alignItems: 'center',
-    // },
-    // footerText: {
-    //     color: 'white',
-    //     fontSize: 14,
-    // },
+    errorText: {
+        color:'red'
+    }
 });
 
 export default Login;
