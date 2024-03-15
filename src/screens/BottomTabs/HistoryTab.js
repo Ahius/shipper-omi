@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 
 
+
+
 import { FetchshipperOrders } from '../../redux/reducers/shipperHistorySlice';
 import { ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -36,6 +38,28 @@ const HistoryTab = () => {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
+// =======
+//     return (
+//       <SafeAreaView
+//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+//       >
+//         <StatusBar style="auto" />
+//         <Text>Loading...</Text>
+//       </SafeAreaView>
+//     );
+//   }
+
+//   if (shipperOrders.length === 0) {
+//     return (
+//       <SafeAreaView
+//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+//       >
+//         <StatusBar style="auto" />
+//         <Text>No orders to display</Text>
+//       </SafeAreaView>
+//     );
+//   }
+// >>>>>>> e5461d6655a574e0abda073bcaabd4e8afa12c98
 
   return (
     <View style={styles.container}>

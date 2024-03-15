@@ -6,7 +6,8 @@ import axios from "axios";
 
 export const FetchOrderDetail = createAsyncThunk('order/fetchOrderDetail', async({CustomerOrderId}, {rejectWithValue}) => {
     try {
-        const token = AsyncStorage.getItem(token);
+        const token = await AsyncStorage.getItem('token');
+
         const respone = await axios.get(`https://onlinemarket-api.nguyenminhhai.us/api/v1/order-detail/order/${CustomerOrderId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
