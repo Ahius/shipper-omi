@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'rea
 
 import { FetchshipperOrders } from '../../redux/reducers/shipperHistorySlice';
 import { ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const HistoryTab = () => {
   const dispatch = useDispatch();
@@ -25,9 +26,16 @@ const HistoryTab = () => {
     setSelectedStatus(status);
   };
 
+  const navigation = useNavigation();
+
+  const handleOrderPress = (orderId) => {
+    navigation.navigate('OrderDetail', { orderId });
+  };
+
   if (!Array.isArray(shipperOrders)) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
+
 
   return (
     <View style={styles.container}>
@@ -46,7 +54,8 @@ const HistoryTab = () => {
       </View>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {shipperOrders.length > 0 ? (shipperOrders.map(order => (
-          <TouchableOpacity key={order.CustomerOrderId} style={styles.card}>
+          // <TouchableOpacity key={order.CustomerOrderId} style={styles.card}>
+          <TouchableOpacity key={order.CustomerOrderId} style={styles.card} onPress={() => handleOrderPress(order.CustomerOrderId)}>
             <Image source={require('../../../assets/images/image-history-orders.jpg')} style={styles.image} />
 
             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, color: '#62BEB0' }}>Tòa nhà: {order.BuildingName}</Text>
