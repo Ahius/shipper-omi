@@ -2,13 +2,14 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export const login = createAsyncThunk('auth/login', async ({ Phone, Password }, { rejectWithValue }) => {
   try {
     const response = await axios.post('https://onlinemarket-api.nguyenminhhai.us/api/v1/shipper?action=login', {
       Phone: Phone,
       Password: Password
     });
-
+    // dispatch(shipperOrders(response.data.ShipperId));
     return response.data;
 
   } catch (error) {
@@ -46,8 +47,9 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload.data.token; 
+        state.token = action.payload.data.token;
         state.error = null;
+        state.shipperId = action.payload.data.shipper.ShipperId;
         // Lưu token vào AsyncStorage
         AsyncStorage.setItem('token', state.token)
           .then(() => console.log('Token saved to AsyncStorage'))
@@ -55,7 +57,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.message;
+        state.error = action.payload;
       })
 
       .addCase('auth/logout', (state) => {
