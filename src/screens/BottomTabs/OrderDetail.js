@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { FetchOrderDetail } from '../../redux/reducers/orderSlice';
 
@@ -9,7 +9,7 @@ const OrderDetail = () => {
   const route = useRoute();
   const { orderId } = route.params;
   const orderDetail = useSelector(state => state.orderDetail.data);
-
+  const navigation = useNavigation();
   useEffect(() => {
     dispatch(FetchOrderDetail({ CustomerOrderId: orderId }));
   }, [dispatch, orderId]);
@@ -18,7 +18,7 @@ const OrderDetail = () => {
     return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   };
 
-  console.log('orderDetail:', orderDetail);
+  // console.log('orderDetail:', orderDetail.data[0].CustomerOrderId);
 
   if (!orderDetail || !Array.isArray(orderDetail.data) || orderDetail.data.length === 0) {
     return (
@@ -36,7 +36,11 @@ const OrderDetail = () => {
         <Text style={styles.headerText}>Chi tiết đơn hàng</Text>
       </View>
       <ScrollView style={styles.content}>
-        <TouchableOpacity style={styles.card}>
+        {/* <TouchableOpacity style={styles.card}> */}
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate('Package', { orderId: orderDetail.data[0]?.CustomerOrderId })}
+        >
           <View style={styles.cardContent}>
             <Image
               style={styles.image}
@@ -80,11 +84,11 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   headerText: {
-    marginTop:60,
-    textAlign:'center',
+    marginTop: 60,
+    textAlign: 'center',
     fontSize: 24,
     fontWeight: 'bold',
-    color:'#E06418'
+    color: '#E06418'
   },
   content: {
     flex: 1,

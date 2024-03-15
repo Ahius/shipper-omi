@@ -20,6 +20,7 @@ const Login = ({ navigation }) => {
                     if (response.payload.msg === "Login succesfully") {
                         setError(null);
                         navigation.navigate('AppNavigation');
+                        // console.log('logogog: ', response.payload);
                     } else {
                         setError('Đã xảy ra lỗi trong quá trình đăng nhập.');
                     }
