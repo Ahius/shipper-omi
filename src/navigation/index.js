@@ -33,7 +33,8 @@ const ProfileStackScreen = () => (
 export default function AppNavigation() {
 
   const shipperOrders = useSelector(state => state.shipperOder.data);
-  console.log('data pack:', shipperOrders);
+  const shipperProfile = useSelector(state => state.user.data);
+  console.log('data pack:', shipperProfile);
     return (
       <Tab.Navigator>
         <Tab.Screen
