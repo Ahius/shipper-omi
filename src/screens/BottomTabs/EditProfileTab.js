@@ -6,10 +6,13 @@ import {
   ImageBackground,
   TextInput,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
+import { RadioButton } from "react-native-paper";
 
 import { images } from "../../../constants";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,12 +21,13 @@ import { StatusBar } from "expo-status-bar";
 import { profileUser, updateProfile } from "../../redux/reducers/userSlice";
 import { fetchArea } from "../../redux/reducers/areaSlice";
 import { Picker } from "@react-native-picker/picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 export default function EditProfileTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const shipperId = useSelector((state) => state.auth.shipperId);
   const shipperData = useSelector((state) => state.user.data);
   const areaData = useSelector((state) => state.area);
@@ -35,10 +39,15 @@ export default function EditProfileTab() {
     Gender: shipperData.Gender,
     Status: shipperData.Status,
     AreaId: shipperData.AreaId,
-    CCCD: shipperData.CCCD
+    CCCD: shipperData.CCCD,
   });
 
-  
+  const [selectedGender, setSelectedGender] = useState(shipperData.Gender); // State to hold selected gender
+
+  const handleGenderChange = (value) => {
+    setSelectedGender(value); // Update selected gender when radio button is changed
+    handleTextInputChange("Gender", value); // Also update the profileUpdate state
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,13 +85,13 @@ export default function EditProfileTab() {
       const response = await dispatch(
         updateProfile({ ShipperId: shipperId, profileUpdate: profileUpdate })
       );
-  
+
       if (response && response.payload) {
         if (response.payload === "Shipper updated successfully") {
           setError(null);
-         
-             navigation.navigate("Login");
-          
+
+          navigation.navigate("Login");
+
           console.log("Profile updated successfully:", response.payload);
         } else {
           setError("Đã xảy ra lỗi trong quá trình chỉnh sửa 1.");
@@ -130,6 +139,10 @@ export default function EditProfileTab() {
   }
 
   return (
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
     <View style={{ flex: 1 }}>
       <View style={{ margin: 20 }}>
         <View style={{ alignItems: "center" }}>
@@ -174,7 +187,7 @@ export default function EditProfileTab() {
             {shipperData.Name}
           </Text>
         </View>
-         <View style={styles.action}>
+        <View style={styles.action}>
           <FontAwesome name="user-o" size={24} />
           <TextInput
             placeholder="Họ và Tên"
@@ -204,10 +217,11 @@ export default function EditProfileTab() {
             autoCorrect={false}
             style={styles.textInput}
             value={profileUpdate.Phone}
+            keyboardType="numeric"
             onChangeText={(value) => handleTextInputChange("Phone", value)}
           />
         </View>
-        <View style={styles.action}>
+        {/* <View style={styles.action}>
           <Icon name="human-male-female" size={24} />
           <TextInput
             placeholder="Giới tính"
@@ -217,10 +231,37 @@ export default function EditProfileTab() {
             value={profileUpdate.Gender}
             onChangeText={(value) => handleTextInputChange("Gender", value)}
           />
-        </View>
+        </View> */}
+         <View style={styles.genderContainer}>
+         <Icon name="human-male-female" size={24} />
+            <Text style={{ marginRight: 10 }}>Giới tính</Text>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => handleGenderChange("Nam")}
+            >
+              <RadioButton
+                value="Male"
+                status={selectedGender === "Male" ? "checked" : "unchecked"}
+                onPress={() => handleGenderChange("Male")}
+              />
+              <Text>Nam</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => handleGenderChange("Female")}
+            >
+              <RadioButton
+                value="Female"
+                status={selectedGender === "Female" ? "checked" : "unchecked"}
+                onPress={() => handleGenderChange("Female")}
+              />
+              <Text>Nữ</Text>
+            </TouchableOpacity>
+          </View>
         <View style={styles.action}>
           <Icon name="map-marker-radius" size={24} style={{ marginTop: 15 }} />
-           <Picker
+          <Picker
             selectedValue={profileUpdate.AreaId}
             style={styles.textInput}
             onValueChange={(itemValue) =>
@@ -235,7 +276,7 @@ export default function EditProfileTab() {
               />
             ))}
           </Picker>
-        </View> 
+        </View>
         <TouchableOpacity
           style={styles.commandButton}
           onPress={handleProfileUpdate}
@@ -244,6 +285,7 @@ export default function EditProfileTab() {
         </TouchableOpacity>
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -275,5 +317,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 10,
     color: "#05375a",
+  },
+
+  genderContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#737170",
+    paddingBottom: 20,
   },
 });
