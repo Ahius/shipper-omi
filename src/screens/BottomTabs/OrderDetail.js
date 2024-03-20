@@ -1,18 +1,30 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
+
+
 import { FetchOrderDetail } from '../../redux/reducers/orderSlice';
 
 const OrderDetail = () => {
   const dispatch = useDispatch();
+
   const route = useRoute();
   const { orderId } = route.params;
   const orderDetail = useSelector(state => state.orderDetail.data);
   const navigation = useNavigation();
+
+
+
   useEffect(() => {
     dispatch(FetchOrderDetail({ CustomerOrderId: orderId }));
   }, [dispatch, orderId]);
+
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
 
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
@@ -28,37 +40,47 @@ const OrderDetail = () => {
     );
   }
 
+  console.log('data order: ', orderDetail);
+
 
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
+          <Icon name="arrow-back" size={18} color="grey" />
+        </TouchableOpacity>
         <Text style={styles.headerText}>Chi tiết đơn hàng</Text>
       </View>
       <ScrollView style={styles.content}>
-        {/* <TouchableOpacity style={styles.card}> */}
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate('Package', { orderId: orderDetail.data[0]?.CustomerOrderId })}
-        >
-          <View style={styles.cardContent}>
-            <Image
-              style={styles.image}
-              source={{ uri: orderDetail.data[0]?.Image }}
-            />
-            <View style={styles.details}>
-              <Text style={styles.text}>Tên sản phẩm: {orderDetail.data[0]?.Product_Name}</Text>
-              <Text style={styles.text}>Số lượng: {orderDetail.data[0]?.ProductQuantity}</Text>
-              <Text style={styles.text}>Giá tiền: {formatPrice(orderDetail.data[0]?.Price)}</Text>
-              <Text style={styles.text}>Giảm giá: {orderDetail.data[0]?.Discount}%</Text>
-              <Text style={styles.text}>Thành tiền: {formatPrice(orderDetail.data[0]?.Total)}</Text>
+        {orderDetail.data?.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+          >
+            <View style={styles.cardContent}>
+              <Image
+                style={styles.image}
+                source={{ uri: item.Image }}
+              />
+              <View style={styles.details}>
+                <Text style={styles.text}>Tên sản phẩm: {item.Product_Name}</Text>
+                <Text style={styles.text}>Số lượng: {item.ProductQuantity}</Text>
+                <Text style={styles.text}>Giá tiền: {formatPrice(item.Price)}</Text>
+                <Text style={styles.text}>Giảm giá: {item.Discount}%</Text>
+                <Text style={styles.text}>Thành tiền: {formatPrice(item.Total)}</Text>
+              </View>
             </View>
-          </View>
-          <View style={{ marginTop: 20 }}>
-            <Text style={styles.info}>Tên khách hàng: {orderDetail.data[0]?.Customer_Name}</Text>
-            <Text style={styles.info}>Số điện thoại: {orderDetail.data[0]?.Phone}</Text>
-          </View>
-        </TouchableOpacity>
+            <View style={{ marginTop: 20 }}>
+              <Text style={styles.info}>Tên khách hàng: {item.Customer_Name}</Text>
+              <Text style={styles.info}>Số điện thoại: {item.Phone}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Package', { orderId: orderId })}
+          style={styles.button}
+        ><Text style={styles.buttonText}>Vận chuyển</Text></TouchableOpacity>
         <Image
           style={styles.additionalImage}
           source={require('../../../assets/images/img-shipper-odetail.jpeg')}
@@ -74,25 +96,26 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     backgroundColor: '#ffffff',
   },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#ffffff',
-    padding: 10,
-    zIndex: 999,
+   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    // borderBottomWidth: 1,
+    // borderBottomColor: 'gray',
+  },
+  goBackButton: {
+    marginRight: 10,
   },
   headerText: {
-    marginTop: 60,
-    textAlign: 'center',
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#E06418'
+    textAlign:'center',
+    color:'#1E90AC',
   },
   content: {
     flex: 1,
-    marginTop: 70,
+    marginTop: 47,
     paddingHorizontal: 20,
   },
   card: {
@@ -102,8 +125,7 @@ const styles = StyleSheet.create({
     height: 240,
     width: 350,
     marginBottom: 10,
-    elevation: 5,
-    shadowColor: '#000',
+    shadowColor: 'grey',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
@@ -151,7 +173,21 @@ const styles = StyleSheet.create({
     width: 354,
     height: 300,
     borderRadius: 10,
-  }
+  },
+  button: {
+    backgroundColor: '#41A293',
+    padding: 10,
+    width: 180,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 16,
+    marginLeft: 90,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default OrderDetail;

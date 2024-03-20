@@ -1,15 +1,17 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Button } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Button, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as ImagePicker from 'expo-image-picker';
+import 'moment/locale/vi';
 
 
 
-
-import { FetchOrderActivity } from '../../redux/reducers/orderActivitySlice';
+import { FetchOrderActivity, createOrderActivity } from '../../redux/reducers/orderActivitySlice';
 import { Modal } from 'react-native-paper';
-
+import moment from 'moment';
+import 'moment/locale/vi';
 export default function PackageTab() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -17,9 +19,33 @@ export default function PackageTab() {
   const { orderId } = route.params;
   const orderActivity = useSelector(state => state.orderActivity.data);
   const [isModalVisible, setModalVisible] = useState(false);
+  const shipperId = useSelector(state => state.auth.shipperId);
+  const [createData, setCreateData] = useState({
+    shipperId: '',
+    Status: '',
+    Image: ''
+  });
+  // moment.locale('vi');
+  // moment.tz.setDefault('Asia/Ho_Chi_Minh');
+
+  useEffect(() => {
+    setCreateData(prevData => ({
+      ...prevData,
+      shipperId: shipperId
+    }));
+  }, [shipperId]);
+
+  const [status, setStatus] = useState('');
+
+  const handleCheckBoxPress = (value) => {
+    setStatus(value);
+  };
+  console.log("status: ", status);
   useEffect(() => {
     dispatch(FetchOrderActivity({ CustomerOrderId: orderId }));
   }, [dispatch, orderId]);
+
+  // console.log("shipper id:", shipperId);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -33,50 +59,187 @@ export default function PackageTab() {
     toggleModal();
   }
 
+  useEffect(() => {
+    getCreateData('Status', status);
+  }, [status]);
+
+
+
+
+  // const getCreateData = (key, value) => {
+  //   setCreateData({ ...createData, [key]: value });
+  // }
+
+  // if (!ImagePicker.launchImageLibraryAsync) {
+  //   console.log('ImagePicker is not available on this platform.');
+  //   return;
+  // }
+
+  // const handleImagePicker = async () => {
+  //   const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  //   if (permissionResult.granted === false) {
+  //     alert("Permission to access camera roll is required!");
+  //     return;
+  //   }
+
+  //   if (!ImagePicker.launchImageLibraryAsync) {
+  //     console.log('ImagePicker is not available on this platform.');
+  //     return;
+  //   }
+
+  //   const result = await ImagePicker.launchImageLibraryAsync();
+
+  //   if (!result.cancelled) {
+  //     // Process the selected image
+  //     getCreateData('Image', result.uri);
+  //   }
+  // };
+
+
+  const getCreateData = (key, value) => {
+    setCreateData(prevData => ({
+      ...prevData,
+      [key]: value
+    }));
+  }
+
+
+  const handleSubmit = () => {
+    const transformedData = {
+      ShipperId: createData.shipperId,
+      Status: createData.Status,
+      Image: createData.Image
+    };
+    dispatch(createOrderActivity({ CustomerOrderId: orderId, requestData: transformedData }))
+      .then((response) => {
+        console.log('Order activity has been created:', response.payload);
+        console.log('requestData:', transformedData);
+        dispatch(FetchOrderActivity({ CustomerOrderId: orderId }))
+          .then(() => {
+            console.log('Order activity data has been updated', response.payload);
+          })
+          .catch((error) => {
+            console.error('Error fetching updated order activity data:', error);
+          });
+      })
+      .catch((error) => {
+        console.error('Error creating Order activity:', error);
+      });
+  };
+
+
+  // console.log("data create", createData);
+
   return (
     <View style={{ alignItems: "center", justifyContent: "center", flex: 1, marginTop: 70 }}>
-      <TouchableOpacity onPress={handleGoBack}>
+      {/* <TouchableOpacity onPress={handleGoBack}>
         <Icon name="arrow-back" size={18} color="grey" style={{ marginRight: 330 }} />
       </TouchableOpacity>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
         <Text style={{ fontSize: 25, color: '#E84D2C' }}>Quá trình vận chuyển</Text>
+      </View> */}
+
+
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
+          <Icon name="arrow-back" size={18} color="grey" />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Quá trình vận chuyển</Text>
       </View>
+
+
       <ScrollView>
-        {orderActivity ? (orderActivity.map(ac => (
-          <TouchableOpacity style={styles.card} key={ac.OrderActivityId}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ textAlign: 'center', fontSize: 19, color: '#526ECD', marginBottom: 5 }}>Mã đơn: {ac.OrderId}</Text>
-              <Text style={[styles.status, styles.circle, { backgroundColor: getStatusColor(ac.Status) }]}>
-                {ac.Status}
-              </Text>
-            </View>
-            <Text style={styles.text}>Tòa nhà: {ac.BuildingName}</Text>
-            <Text style={styles.text}>Khách hàng: {ac.Name}</Text>
-            <Text style={styles.text}>Điện thoại: {ac.Phone}</Text>
-            <Text style={{ fontSize: 12, color: 'grey' }}>{ac.Date}</Text>
-            {ac.Status !== 'Canceled' && ac.Status !== 'Refund' && (
-              <TouchableOpacity style={styles.button} onPress={handleEdit}>
-                <Text style={styles.buttonText}>Edit</Text>
-              </TouchableOpacity>
-            )}
-          </TouchableOpacity>
-        ))
+        {orderActivity ? (
+          orderActivity.map((ac, index) => (
+            <TouchableOpacity key={ac.OrderActivityId}>
+              <View >
+                {index === 0 && (
+                  <TouchableOpacity style={styles.boxInfo}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
+                      <Text style={styles.text}>Tòa nhà: {ac.BuildingName}</Text>
+                      <Text style={{ textAlign: 'right', fontSize: 16, color: '#526ECD', marginRight: 8, padding: 7, borderRadius: 16, borderWidth: 1, borderColor: '#526ECD', backgroundColor: '#526ECD', color: 'white' }}>Mã đơn: {ac.OrderId}</Text>
+                    </View>
+                    <Text style={styles.text}>Khách hàng: {ac.Name}</Text>
+                    <Text style={styles.text}>Điện thoại: {ac.Phone}</Text>
+                  </TouchableOpacity>
+
+                )}
+              </View>
+              <View style={{ flexDirection: 'row', height: 80 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 10, width: 380 }}>
+                  <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginLeft: 5 }}>
+                    <Text style={{ fontSize: 12, color: 'grey', marginBottom: 19, marginRight: 5 }}>Thời gian</Text>
+                    <View style={{ flexDirection: 'column-reverse', flex: 1 }}>
+                      <Text style={{ fontSize: 12, color: 'grey', marginBottom: 5 }}>{ac.Date}</Text>
+                    </View>
+                  </View>
+                  <View style={{ width: 1, backgroundColor: 'grey', height: '100%', marginHorizontal: 10, marginLeft: 32 }}></View>
+                  <View style={{ flexDirection: 'column', alignItems: 'flex-end', marginLeft: 30 }}>
+                    <Text style={{ fontSize: 12, color: 'grey', marginBottom: 5, marginRight: 2 }}>Trạng thái</Text>
+                    <Text style={[styles.status, styles.circle, { backgroundColor: getStatusColor(ac.Status) }]}>
+                      {ac.Status}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+
+
+            </TouchableOpacity>
+
+          ))
         ) : (
           <Text>Hiện chưa có quá trình nào</Text>
         )}
+        <TouchableOpacity style={styles.button} onPress={handleEdit}>
+          <Text style={styles.buttonText}>Cập nhật</Text>
+        </TouchableOpacity>
       </ScrollView>
+
 
       <Modal visible={isModalVisible} onRequestClose={toggleModal}>
         <View style={styles.modalContent}>
-          <Text>Eddit Here</Text>
-          <TouchableOpacity onPress={toggleModal}>
-            <TouchableOpacity><Text>Cập nhật</Text></TouchableOpacity>
-            <Text>Hide me!</Text>
-          </TouchableOpacity>
+          <Text style={{ bottom: 70, fontSize: 17, color: '#1E90AC' }}>Cập nhật quá trình giao hàng</Text>
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={[styles.checkBox, status === 'Shipping' && styles.checked]}
+              onPress={() => handleCheckBoxPress('Shipping')}
+            >
+              <Text style={[styles.checkBoxText, status === 'Shipping' && styles.checkedText]}>Shipping</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.checkBox, status === 'Buying' && styles.checked]}
+              onPress={() => handleCheckBoxPress('Buying')}
+            >
+              <Text style={[styles.checkBoxText, status === 'Buying' && styles.checkedText]}>Buying</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.checkBox, status === 'Success' && styles.checked]}
+              onPress={() => handleCheckBoxPress('Success')}
+            >
+              <Text style={[styles.checkBoxText, status === 'Success' && styles.checkedText]}>Success</Text>
+            </TouchableOpacity>
+          </View>
+          <TextInput
+            placeholder="Image"
+            onChangeText={(value) => {
+              getCreateData('Image', value);
+            }}
+            value={createData.Image}
+            style={styles.input}
+          />
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.updateButton} onPress={handleSubmit}>
+              <Text style={styles.buttonText}>Cập nhật</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.hideButton} onPress={toggleModal}>
+              <Text style={styles.buttonText}>Hide</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
-
-
 
     </View>
   )
@@ -121,6 +284,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
+    marginTop: 40
   },
   buttonText: {
     color: 'white',
@@ -129,8 +293,10 @@ const styles = StyleSheet.create({
 
   text: {
     marginTop: 3,
-    fontSize: 15,
+    marginLeft: 8,
+    fontSize: 13,
     marginBottom: 2,
+    textAlign: 'left'
 
   },
 
@@ -141,25 +307,127 @@ const styles = StyleSheet.create({
   },
 
   circle: {
-    width: 83,
+    width: 130,
     height: 32,
-    borderRadius: 15,
     textAlign: 'center',
     lineHeight: 30,
     color: 'white',
     fontWeight: 'bold',
+    borderRadius: 10,
   },
 
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
-    marginLeft:58,
-    height:300,
-    width:270,
+    marginLeft: 58,
+    height: 300,
+    width: 270,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
     borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    bottom: 50,
+  },
+  checkBox: {
+    backgroundColor: '#44C8D2',
+    borderRadius: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 7,
+    marginHorizontal: 5,
+  },
+  checked: {
+    backgroundColor: 'lightblue',
+  },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginBottom: 25,
+    marginRight: 180,
+    // borderBottomWidth: 1,
+    // borderBottomColor: 'gray',
+  },
+  goBackButton: {
+    marginRight: 10,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#1E90AC'
+  },
+
+  boxInfo: {
+    backgroundColor: '#fff',
+    borderTopEndRadius: 10,
+    borderTopStartRadius: 10,
+    padding: 10,
+    height: 140,
+    width: 380,
+  },
+
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+  },
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  checkBox: {
+    width: 100,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#e0e0e0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checked: {
+    backgroundColor: '#1E90AC',
+  },
+  checkBoxText: {
+    color: '#000',
+  },
+  checkedText: {
+    color: '#fff',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  updateButton: {
+    backgroundColor: '#1E90AC',
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  hideButton: {
+    backgroundColor: '#ccc',
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 
 
