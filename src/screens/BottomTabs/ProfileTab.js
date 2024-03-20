@@ -21,8 +21,9 @@ export default function ProfileTab({ navigation }) {
     navigation.setOptions({
       headerRight: () => (
         <Icon
-          name="account-edit" size={25}
-          onPress={() => navigation.navigate('EditProfile')}
+          name="account-edit"
+          size={25}
+          onPress={() => navigation.navigate("EditProfile")}
           title="Edit"
           color="#007AFF"
         />
@@ -81,65 +82,68 @@ export default function ProfileTab({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <StatusBar style="auto" />
-      <View style={{ width: "100%",position: 'absolute' }}>
-        <Image
-          source={images.cover}
-          resizeMode="cover"
-          style={{ height: 228, width: "100%" }}
-        />
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f2f7" }}>
+      <View style={styles.imageWrapper}>
+        <StatusBar style="auto" />
 
-      <View style={{ flex: 1, alignItems: "center"}}>
-        <Image
-          source={images.shipperImg}
-          resizeMode="contain"
-          style={{
-            height: 155,
-            width: 155,
-            borderRadius: 999,
-            borderColor: "#ccc",
-            borderWidth: 2,
-            marginTop: 90,
-          }}
-        />
-      </View>
-      {shipperData && (
-        <View style={styles.userInfoSection}>
-          <View style={{ alignItems: "center"}}>
-            <Text style={{ marginVertical: 8, fontWeight: "bold" }}>
-              {shipperData.Name}
-            </Text>
+        <View style={{ alignItems: "center" }}>
+          <Image
+            source={images.shipperImg}
+            resizeMode="contain"
+            style={{
+              height: 100,
+              width: 100,
+              borderRadius: 999,
+              borderColor: "#ccc",
+              borderWidth: 2,
+              marginTop: -30
+            }}
+          />
+          <View style={{ alignItems: "center" }}>
+            <Text style={{ fontWeight: "bold", fontSize: 25 }}>{shipperData.Name}</Text>
             <Caption style={styles.caption}>{shipperData.Email}</Caption>
           </View>
+        </View>
+      </View>
 
-          <View style={styles.userInfoSection}>
-            <View style={styles.row}>
-              <Icon name="phone" size={20} />
-              <Text style={styles.userInfoText}>{shipperData.Phone}</Text>
+      {shipperData && (
+        <View style={{}}>
+          <View style={{}}>
+            <View style={{ alignItems: "center" }}>
+              {/* <Text style={{ fontWeight: "bold", fontSize: 30 }}>{shipperData.Name}</Text>
+              <Caption style={styles.caption}>{shipperData.Email}</Caption> */}
             </View>
 
-            <View style={styles.row}>
-              <Icon name="human-male-female" size={20} />
-              <Text style={styles.userInfoText}> {shipperData.Gender}</Text>
-            </View>
-
-            <View style={styles.row}>
-              <Icon name="map-marker-radius" size={20} />
-              <Text style={styles.userInfoText}> {shipperData.AreaName}</Text>
-            </View>
-          </View>
-
-          <View style={styles.infoBoxWrapper}>
+            <View style={styles.infoBoxWrapper}>
               <View style={styles.infoBox}>
                 <Title>{shipperData.Balance}</Title>
-                <Caption> Điểm tín dụng</Caption>
+                <Caption style={styles.caption}> Điểm tín dụng</Caption>
               </View>
             </View>
+            <View style={{ }}>
+              <View style={styles.userInfoSection}>
+                <View style={styles.row}>
+                  <Icon name="phone" size={25} />
+                  <Text style={styles.menuItemText}>{shipperData.Phone}</Text>
+                </View>
 
-          <View style={styles.menuWrapper}>
-
+                <View style={styles.row}>
+                  <Icon name="human-male-female" size={25} />
+                  <Text style={styles.menuItemText}> {shipperData.Gender}</Text>
+                </View>
+                <View style={styles.row}>
+                  <Icon name="map-marker-radius" size={25} />
+                  <Text style={styles.menuItemText}>
+                    {" "}
+                    {shipperData.AreaName}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+      <View style={styles.menuWrapper}>
         <View style={styles.menuItem}>
           <Icon name="credit-card" size={25} />
           <Text style={styles.menuItemText}>Payment</Text>
@@ -155,29 +159,28 @@ export default function ProfileTab({ navigation }) {
           <Text style={styles.menuItemText}>Settings</Text>
         </View>
       </View>
-        </View>
-      )}
     </SafeAreaView>
   );
+
 }
 
 const styles = StyleSheet.create({
-
   caption: {
-    fontSize: 14,
-    lineHeight: 14,
+    fontSize: 20,
     fontWeight: "500",
   },
 
   userInfoSection: {
-   marginTop: 10,
-   marginLeft: 10
-    
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    width: "95%",
+    margin: 10
   },
 
   row: {
     flexDirection: "row",
-    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
   },
 
   userInfoText: {
@@ -185,16 +188,13 @@ const styles = StyleSheet.create({
   },
 
   infoBoxWrapper: {
-    marginVertical: 10,
-    marginRight: 10,
-    borderBottomColor: "#dddddd",
-    borderBottomWidth: 1,
-    borderTopColor: "#dddddd",
-    borderTopWidth: 1,
-    width: "98%",
-    height: 100,
+    margin: 10,
+    borderColor: "#dddddd",
+    borderRadius: 10,
+    width: "95%",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#fff"
   },
 
   infoBox: {
@@ -202,10 +202,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
+  menuWrapper: {
+    marginTop: 10,
+     backgroundColor: "#fff",
+    borderRadius: 10,
+    width: "95%",
+    margin: 10
+  },
+
   menuItem: {
     flexDirection: "row",
-    paddingVertical: 25,
-    
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    marginLeft: 10,
   },
 
   menuItemText: {
@@ -215,4 +224,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
   },
+
+  imageWrapper: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    height: 150,
+    width: "95%",
+    margin: 10
+  }
 });
