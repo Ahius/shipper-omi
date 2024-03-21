@@ -35,7 +35,7 @@ const HistoryTab = () => {
   };
 
   if (!Array.isArray(shipperOrders)) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return <ActivityIndicator size="large" color="#0000ff" style={{flex: 1, justifyContent: "center", alignItems: "center" }}/>;
   }
 
 // =======

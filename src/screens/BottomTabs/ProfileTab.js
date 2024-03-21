@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, Button } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../../constants";
 import { StatusBar } from "expo-status-bar";
@@ -8,6 +16,7 @@ import { profileUser } from "../../redux/reducers/userSlice";
 import { Caption, Title } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import IonIcon from "react-native-vector-icons/Ionicons";
+import { logout } from "../../redux/reducers/authSlice";
 
 export default function ProfileTab({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,6 +25,17 @@ export default function ProfileTab({ navigation }) {
   const dispatch = useDispatch();
   const shipperId = useSelector((state) => state.auth.shipperId);
   const shipperData = useSelector((state) => state.user.data);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    console.log('Logged out successfully');
+    navigation.navigate('Login');
+  };
+
+  const genderMapping = {
+    Male: 'Nam',
+    Female: 'Nữ',
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -50,12 +70,11 @@ export default function ProfileTab({ navigation }) {
 
   if (isLoading) {
     return (
-      <SafeAreaView
+      <ActivityIndicator
+        size="large"
+        color="#0000ff"
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      >
-        <StatusBar style="auto" />
-        <Text>Loading...</Text>
-      </SafeAreaView>
+      />
     );
   }
 
@@ -91,16 +110,18 @@ export default function ProfileTab({ navigation }) {
             source={images.shipperImg}
             resizeMode="contain"
             style={{
-              height: 100,
-              width: 100,
+              height: 90,
+              width: 90,
               borderRadius: 999,
               borderColor: "#ccc",
               borderWidth: 2,
-              marginTop: -30
+              marginTop: -30,
             }}
           />
           <View style={{ alignItems: "center" }}>
-            <Text style={{ fontWeight: "bold", fontSize: 25 }}>{shipperData.Name}</Text>
+            <Text style={{ fontWeight: "bold", fontSize: 25 }}>
+              {shipperData.Name}
+            </Text>
             <Caption style={styles.caption}>{shipperData.Email}</Caption>
           </View>
         </View>
@@ -120,7 +141,7 @@ export default function ProfileTab({ navigation }) {
                 <Caption style={styles.caption}> Điểm tín dụng</Caption>
               </View>
             </View>
-            <View style={{ }}>
+            <View style={{}}>
               <View style={styles.userInfoSection}>
                 <View style={styles.row}>
                   <Icon name="phone" size={25} />
@@ -129,7 +150,7 @@ export default function ProfileTab({ navigation }) {
 
                 <View style={styles.row}>
                   <Icon name="human-male-female" size={25} />
-                  <Text style={styles.menuItemText}> {shipperData.Gender}</Text>
+                  <Text style={styles.menuItemText}> {genderMapping[shipperData.Gender]}</Text>
                 </View>
                 <View style={styles.row}>
                   <Icon name="map-marker-radius" size={25} />
@@ -159,9 +180,13 @@ export default function ProfileTab({ navigation }) {
           <Text style={styles.menuItemText}>Settings</Text>
         </View>
       </View>
+      <View style={{ alignItems: "center" }}>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Đăng xuất</Text>
+          </TouchableOpacity>
+        </View>
     </SafeAreaView>
   );
-
 }
 
 const styles = StyleSheet.create({
@@ -174,13 +199,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     width: "95%",
-    margin: 10
+    margin: 10,
   },
 
   row: {
     flexDirection: "row",
-    paddingHorizontal: 10,
-    paddingVertical: 15,
+    padding: 10
   },
 
   userInfoText: {
@@ -194,7 +218,7 @@ const styles = StyleSheet.create({
     width: "95%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
 
   infoBox: {
@@ -204,16 +228,15 @@ const styles = StyleSheet.create({
 
   menuWrapper: {
     marginTop: 10,
-     backgroundColor: "#fff",
+    backgroundColor: "#fff",
     borderRadius: 10,
     width: "95%",
-    margin: 10
+    margin: 10,
   },
 
   menuItem: {
     flexDirection: "row",
-    paddingHorizontal: 10,
-    paddingVertical: 15,
+    padding: 10,
     marginLeft: 10,
   },
 
@@ -230,6 +253,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 150,
     width: "95%",
-    margin: 10
-  }
+    margin: 10,
+  },
+
+  logoutButton: {
+    backgroundColor: '#ff0000',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    width: "50%"
+  },
+
+  logoutButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: "center"
+  },
 });

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -71,8 +72,6 @@ export default function EditProfileTab() {
   }, []);
 
   const handleTextInputChange = (name, value) => {
-    // console.log("Name: ", name); // Check if name is received correctly
-    // console.log("Value: ", value); // Check if value is received correctly
     setProfileUpdate((prevState) => ({
       ...prevState,
       [name]: value,
@@ -107,12 +106,11 @@ export default function EditProfileTab() {
 
   if (isLoading) {
     return (
-      <SafeAreaView
+      <ActivityIndicator
+        size="large"
+        color="#0000ff"
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      >
-        <StatusBar style="auto" />
-        <Text>Loading...</Text>
-      </SafeAreaView>
+      />
     );
   }
 
@@ -149,8 +147,8 @@ export default function EditProfileTab() {
           <TouchableOpacity onPress={() => {}}>
             <View
               style={{
-                height: 100,
-                width: 100,
+                height: 90,
+                width: 90,
                 borderRadius: 15,
                 justifyContent: "center",
                 alignItems: "center",
@@ -295,13 +293,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#737170",
     alignItems: "center",
-    marginTop: 10,
   },
 
   action: {
     flexDirection: "row",
     marginTop: 10,
-    marginBottom: 50,
+    marginBottom: 40,
     borderBottomWidth: 1,
     borderBottomColor: "#737170",
     paddingBottom: 10,
@@ -325,6 +322,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#737170",
-    paddingBottom: 20,
+    paddingBottom: 15,
   },
 });

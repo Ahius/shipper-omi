@@ -1,105 +1,206 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Feather";
-import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { logout } from "../../redux/reducers/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
+import { profileUser } from "../../redux/reducers/userSlice";
+import { FetchshipperOrders } from "../../redux/reducers/shipperHistorySlice";
 
 export default function HomeTab() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState("Success");
+
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const handleLogout = () => {
-    dispatch(logout());
-    console.log('Logged out successfully');
-    navigation.navigate('Login');
+  const shipperId = useSelector((state) => state.auth.shipperId);
+  const shipperData = useSelector((state) => state.user.data);
+  const shipperOrders = useSelector((state) => state.shipperOder.data);
+
+  useEffect(() => {
+    console.log(selectedStatus);
+    if (shipperId !== null) {
+      dispatch(
+        FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus })
+      );
+    }
+  }, [dispatch, shipperId, selectedStatus]);
+
+  console.log("data his", shipperOrders);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (shipperId) {
+          setIsLoading(true);
+          await dispatch(profileUser({ ShipperId: shipperId }));
+          setIsLoading(false);
+        }
+      } catch (error) {
+        setIsLoading(false);
+        setError(error.message);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, shipperId]);
+
+  const handlePickUp = () => {
+    navigation.navigate("History");
   };
+
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#0000ff"
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <StatusBar style="auto" />
+        <Text>Error: {error}</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!shipperData) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <StatusBar style="auto" />
+        <Text>No user data found</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!Array.isArray(shipperOrders)) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#0000ff"
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      />
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{ position: 'absolute', top: 40, right: 10 }}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutButtonText}>Đăng xuất</Text>
-          </TouchableOpacity>
-        </View>
         <View style={{ alignItems: "center", marginVertical: 40 }}>
-          <Text style={[styles.themeText, { color: "#fff" }]}>Track your shipment</Text>
-          <Text style={{ color: "#fff" }}>Keep track of your goods with us</Text>
-          <View style={styles.searchBox}>
-            <TextInput
-              placeholder="Number Tracking"
-              clearButtonMode="always"
-              style={styles.searchBar}
-            />
-            <View style={styles.searchIcon}>
-              <Icon name="search" size={20} color="#000" />
-            </View>
-          </View>
+          <Text style={[styles.themeText, { color: "#fff" }]}>Xin chào</Text>
+          <Text style={[styles.themeText, { color: "#fff" }]}>
+            {" "}
+            {shipperData.Name}
+          </Text>
+          <Text style={{ color: "#fff" }}>
+            Bắt đầu một ngày giao hàng tuyệt vời
+          </Text>
         </View>
       </View>
-
       <View style={styles.center}>
-        <Text style={styles.themeText}>Order Service</Text>
+        <Text style={styles.themeText}>Đơn giao hàng của bạn</Text>
         <View style={styles.orderContainer}>
-          <View style={styles.orderBox}>
-            <View style={styles.orderContent}>
-              <Icon name="shipping-fast" size={25} />
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                Pick Up Package
-              </Text>
+          <TouchableOpacity onPress={() => handlePickUp()}>
+            <View style={styles.orderBox}>
+              <View style={styles.orderContent}>
+                <Icon name="shipping-fast" size={25} />
+                <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                  Nhận đơn hàng
+                </Text>
+              </View>
             </View>
-          </View>
-
-          <View style={[styles.orderBox]}>
-            <View style={styles.orderContent}>
-              <Icon2 name="package" size={25} />
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                Shipping Package
-              </Text>
-            </View>
-          </View>
+          </TouchableOpacity>
         </View>
         <View>
-          <Text style={styles.themeText}>Recently Tracking</Text>
+          <Text style={styles.themeText}>Hoạt Động gần đây</Text>
         </View>
 
         <View style={[styles.trackingBox, { marginTop: 20 }]}>
-          <View style={styles.orderContainer}>
-            <Icon name="shipping-fast" size={25} color={"#fff"}>
+          <View style={styles.historyContainer}>
+            <Icon name="shipping-fast" size={25}>
               <Text style={styles.trackingText}>
                 {" "}
-                Your item is being shipped
+                Lịch sử đơn hàng
               </Text>
             </Icon>
           </View>
-          <View style={styles.trackingContent}>
-            <View>
+          <ScrollView>
+            {shipperOrders.length > 0 ? (
+              shipperOrders.map((order) => (
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      margin: 10,
+                      color: "#62BEB0",
+                    }}
+                  >
+                    Tòa nhà: {order.BuildingName}
+                  </Text>
+                  <Text style={styles.shippingOrderText}>
+                    Trạng thái thanh toán: {order.PayingStatus}
+                  </Text>
+                  <Text style={styles.shippingOrderText}>
+                    Hoa hồng:{" "}
+                    {order.ShippingPrice.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </Text>
+                  <Text style={styles.shippingOrderText}>
+                    Trạng thái:{" "}
+                    {order.Status === "Canceled" && (
+                      <Text style={styles.canceledStatus}>{order.Status}</Text>
+                    )}
+                    {order.Status === "Success" && (
+                      <Text style={styles.successStatus}>{order.Status}</Text>
+                    )}
+                    {order.Status === "Pending" && (
+                      <Text style={styles.pendingStatus}>{order.Status}</Text>
+                    )}
+                  </Text>
 
-              <Text style={{ fontWeight: "bold", color: "#fff" }} >Track Number</Text>
-              <Text style={styles.trackingText}>232-444-230</Text>
-            </View>
-
-            <View>
-
-              <Text style={{ fontWeight: "bold", color: "#fff" }}>Address</Text>
-              <Text style={styles.trackingText}>HCM, Vietnam</Text>
-            </View>
-          </View>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "grey",
+                      marginTop: 4,
+                      marginLeft: 12,
+                      textAlign: "left",
+                    }}
+                  >
+                    Thời gian:{" "}
+                    {new Date(order.OrderDate).toLocaleDateString("en-CA")}
+                  </Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noOrderText}>Hiện chưa có đơn hàng nào</Text>
+            )}
+          </ScrollView>
         </View>
-
       </View>
-
-
-      {/* <View style={styles.footer}>
-        <View style={styles.navigateBar}>
-        <Icon name="home" size={30}/>
-        <Icon2 name="package" size={30}/>
-        <Icon3 name="sticker-text" size={30}/>
-        <Icon name="user" size={30}/>
-        </View>
-      </View> */}
-
       <StatusBar style="auto" />
     </View>
   );
@@ -108,7 +209,7 @@ export default function HomeTab() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f3f2f7",
   },
 
   header: {
@@ -120,33 +221,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 
-  searchBox: {
-    width: 360,
-    position: "relative",
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "#ccc",
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    marginTop: 10,
-  },
-
-  searchBar: {
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    flex: 1,
-  },
-
-  searchIcon: {
-    position: "absolute",
-    right: 10,
-  },
-
   center: {
     flex: 1,
     alignItems: "center",
-    marginTop: 10,
   },
 
   orderContainer: {
@@ -164,7 +241,7 @@ const styles = StyleSheet.create({
     width: 160,
     height: 120,
     marginHorizontal: 20,
-    marginBottom: 30
+    marginBottom: 30,
   },
 
   orderContent: {
@@ -173,12 +250,12 @@ const styles = StyleSheet.create({
   },
 
   trackingBox: {
-    backgroundColor: "#125c25",
+    backgroundColor: "#fff",
     borderWidth: 1,
     borderRadius: 8,
     borderColor: "#ccc",
     width: 360,
-    height: 200,
+    height: 300,
   },
 
   trackingContent: {
@@ -190,32 +267,43 @@ const styles = StyleSheet.create({
     width: 320,
     height: 100,
     marginVertical: 20,
-    marginHorizontal: 20
+    marginHorizontal: 20,
   },
 
   trackingText: {
     fontSize: 15,
-    color: "#fff"
+    color: "black",
   },
 
   footer: {
     alignItems: "center",
     paddingTop: 10,
-    paddingBottom: 20
+    paddingBottom: 20,
   },
 
   logoutButton: {
-    backgroundColor: '#ff0000',
+    backgroundColor: "#ff0000",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
   },
 
-
   logoutButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
 
+  shippingOrderText: {
+    paddingLeft: 10,
+    margin: 2
+  },
+
+  historyContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingBottom: 15,
+    marginTop: 20,
+  },
 });
