@@ -84,7 +84,6 @@ const HistoryTab = () => {
       </View>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {shipperOrders.length > 0 ? (shipperOrders.map(order => (
-          // <TouchableOpacity key={order.CustomerOrderId} style={styles.card}>
           <TouchableOpacity key={order.CustomerOrderId} style={styles.card} onPress={() => handleOrderPress(order.CustomerOrderId)}>
             <Image source={require('../../../assets/images/image-history-orders.jpg')} style={styles.image} />
 
