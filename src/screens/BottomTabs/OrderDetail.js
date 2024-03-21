@@ -40,7 +40,7 @@ const OrderDetail = () => {
     );
   }
 
-  console.log('data order: ', orderDetail);
+  // console.log('data order: ', orderDetail);
 
 
 
