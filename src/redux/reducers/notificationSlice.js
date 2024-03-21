@@ -4,7 +4,7 @@ import axios from "axios";
 
 
 
-export const FetchNotification = createAsyncThunk('order/fetchNotification', async({ShipperId}, {rejectWithValue}) => {
+export const FetchNotification = createAsyncThunk('noti/fetchNotification', async ({ ShipperId }, { rejectWithValue }) => {
     try {
         const token = await AsyncStorage.getItem('token');
 
@@ -19,10 +19,23 @@ export const FetchNotification = createAsyncThunk('order/fetchNotification', asy
     }
 });
 
+export const updateNoti = createAsyncThunk(
+    'noti/UpdateNoti',
+    async ({ id }) => {
+        try {
+            const response = await axios.put(`https://onlinemarket-api.nguyenminhhai.us/api/v1/notification/${id}`);
+            return response.data;
+        } catch (error) {
+
+            throw error;
+        }
+    }
+);
+
 
 
 const notiSlice = createSlice({
-    name:'noti',
+    name: 'noti',
     initialState: {
         error: null,
         loading: false,
@@ -48,6 +61,22 @@ const notiSlice = createSlice({
 
                 state.error = action.payload;
             });
+
+        builder
+            .addCase(updateNoti.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateNoti.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.auth.shipperId = action.payload.shipperId; 
+            })
+
+            .addCase(updateNoti.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Something went wrong.';
+            });
+
     },
 });
 

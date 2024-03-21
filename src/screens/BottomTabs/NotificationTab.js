@@ -1,7 +1,7 @@
 // NotificationTab.js
 
 import React, { useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { FetchNotification } from '../../redux/reducers/notificationSlice';
 import moment from 'moment';
@@ -15,23 +15,25 @@ const NotificationTab = () => {
     dispatch(FetchNotification({ ShipperId: shipperId }));
   }, [dispatch, shipperId]);
 
+  // console.log('noti dâdad: ', notifications);
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Danh sách thông báo</Text>
-      <ScrollView>
-        {notifications.length > 0 ? (
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        {notifications && notifications.length > 0 ? (
           notifications.map((noti) => (
             <TouchableOpacity key={noti.id} style={styles.notificationContainer}>
               <Text style={styles.notificationTitle}>{noti.message}</Text>
               <Text style={styles.notificationDate}>
-                {moment.utc(noti.Date).format('DD/MM/YYYY - HH:mm')}
+                {moment.utc(noti.date).format('DD/MM/YYYY - HH:mm')}
               </Text>
             </TouchableOpacity>
           ))
 
         ) : (
-          <Text style={styles.noNotificationsText}>Chưa có thông báo nào dành cho bạn!</Text>
+          <Text>Chưa có thông báo nào dành cho bạn!</Text>
         )}
       </ScrollView>
     </View>
@@ -42,42 +44,34 @@ const NotificationTab = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 18,
-    top: 100,
+    padding: 10,
+    backgroundColor: '#fff',
   },
   header: {
-    fontSize: 23,
-    color:'#E84D2C',
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  scrollViewContent: {
+    flexGrow: 1,
+  },
   notificationContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    backgroundColor: '#fff', 
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    // elevation: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingVertical: 10,
   },
   notificationTitle: {
-    fontSize: 17,
-    marginBottom: 5,
-    color: '#333', 
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   notificationDate: {
-    fontSize: 12,
-    marginBottom: 5,
-    color: '#666', 
+    fontSize: 14,
+    color: '#999',
   },
-  markAsReadButton: {
-    color: 'blue',
-    textDecorationLine: 'underline',
-    marginTop: 5,
+  noNotificationsText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

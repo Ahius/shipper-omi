@@ -24,7 +24,35 @@ const HistoryTab = () => {
     }
   }, [dispatch, shipperId, selectedStatus]);
 
+///////222
+  // useEffect(() => {
+  //   console.log(selectedStatus);
+  //   if (shipperId !== null) {
+  //     dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus }));
+  //   }
+  // }, [dispatch, shipperId, selectedStatus]);
+  
+  // useEffect(() => {
+  //   // Define a function to fetch shipper orders
+  //   const fetchShipperOrders = async () => {
+  //     if (shipperId !== null) {
+  //       await dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus }));
+  //     }
+  //   };
+  
+  //   // Call the function to fetch shipper orders immediately when shipperId or selectedStatus changes
+  //   fetchShipperOrders();
+  
+  //   // Optionally, you can also set up a timer to periodically refresh the data
+  //   const interval = setInterval(fetchShipperOrders, 50000); // Replace REFRESH_INTERVAL with your desired interval in milliseconds
+  
+  //   // Clear the interval on component unmount to prevent memory leaks
+  //   return () => clearInterval(interval);
+  // }, [dispatch, shipperId, selectedStatus]);
+
   // console.log('data his', shipperOrders);
+
+  console.log('data his', shipperOrders);
   const handleStatusChange = (status) => {
     setSelectedStatus(status);
   };
@@ -36,7 +64,7 @@ const HistoryTab = () => {
   };
 
   if (!Array.isArray(shipperOrders)) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return <ActivityIndicator size="large" color="#0000ff" style={{flex: 1, justifyContent: "center", alignItems: "center" }}/>;
   }
 
   // =======
@@ -80,7 +108,6 @@ const HistoryTab = () => {
       </View>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {shipperOrders.length > 0 ? (shipperOrders.map(order => (
-          // <TouchableOpacity key={order.CustomerOrderId} style={styles.card}>
           <TouchableOpacity key={order.CustomerOrderId} style={styles.card} onPress={() => handleOrderPress(order.CustomerOrderId)}>
             <Image source={require('../../../assets/images/image-history-orders.jpg')} style={styles.image} />
             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, color: '#62BEB0' }}>Tòa nhà: {order.BuildingName}</Text>

@@ -24,12 +24,23 @@ export default function PackageTab() {
   const [status, setStatus] = useState('');
   const [createData, setCreateData] = useState({
     shipperId: '',
-    Status: orderActivity.length > 0 ? orderActivity[orderActivity.length - 1].Status : '',
+    // Status: orderActivity.length > 0 ? orderActivity[orderActivity.length - 1].Status : '',
+    Status: '',
     Image: ''
   });
 
   // console.log('status ban dau', createData);
   // console.log('ss', orderActivity[orderActivity.length - 1].Status);
+
+  // useEffect(() => {
+  //   if (orderActivity && orderActivity.length > 0) {
+  //     const latestStatus = orderActivity[orderActivity.length - 1].Status;
+  //     setCreateData(prevData => ({
+  //       ...prevData,
+  //       Status: latestStatus
+  //     }));
+  //   }
+  // }, [orderActivity]);
 
   useEffect(() => {
     if (orderActivity && orderActivity.length > 0) {
@@ -370,7 +381,7 @@ const styles = StyleSheet.create({
 
   },
   checkBox: {
-    backgroundColor: '#44C8D2', 
+    backgroundColor: '#44C8D2',
     borderRadius: 10,
     paddingVertical: 5,
     paddingHorizontal: 7,
