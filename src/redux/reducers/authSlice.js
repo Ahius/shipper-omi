@@ -9,7 +9,6 @@ export const login = createAsyncThunk('auth/login', async ({ Phone, Password }, 
       Phone: Phone,
       Password: Password
     });
-    // dispatch(shipperOrders(response.data.ShipperId));
     return response.data;
 
   } catch (error) {
@@ -33,7 +32,8 @@ const authSlice = createSlice({
   initialState: {
     token: null,
     error: null,
-    loading: false
+    loading: false,
+
   },
   reducers: {
     clearError(state) {

@@ -23,6 +23,11 @@ const HistoryTab = () => {
     }
   }, [dispatch, shipperId, selectedStatus]);
 
+  const refetchData = () => {
+    if (shipperId !== null) {
+      dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus }));
+    }
+  };
   // console.log('data his', shipperOrders);
   const handleStatusChange = (status) => {
     setSelectedStatus(status);
@@ -63,17 +68,18 @@ const HistoryTab = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Lịch sử giao hàng</Text>
+      <Text style={styles.title}>Tổng đơn hàng</Text>
       <View style={styles.statusButtons}>
         <TouchableOpacity onPress={() => handleStatusChange('Success')} style={[styles.statusButton, selectedStatus === 'Success' && styles.selectedButton]}>
           <Text style={[styles.buttonText, selectedStatus === 'Success' && styles.selectedButtonText]}>Success</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleStatusChange('Canceled')} style={[styles.statusButton, selectedStatus === 'Canceled' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, selectedStatus === 'Canceled' && styles.selectedButtonText]}>Canceled</Text>
+        <TouchableOpacity onPress={() => handleStatusChange('Paid')} style={[styles.statusButton, selectedStatus === 'Paid' && styles.selectedButton]}>
+          <Text style={[styles.buttonText, selectedStatus === 'Paid' && styles.selectedButtonText]}>Paid</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleStatusChange('Pending')} style={[styles.statusButton, selectedStatus === 'Pending' && styles.selectedButton]}>
+        {/* <TouchableOpacity onPress={() => handleStatusChange('Pending')} style={[styles.statusButton, selectedStatus === 'Pending' && styles.selectedButton]}>
           <Text style={[styles.buttonText, selectedStatus === 'Pending' && styles.selectedButtonText]}>Pending</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        
 
       </View>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
@@ -87,9 +93,9 @@ const HistoryTab = () => {
             <Text style={{ textAlign: 'left', marginBottom: 6 }}>Hoa hồng: {order.ShippingPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Text>
             <Text style={styles.statusText}>
               Trạng thái: {' '}
-              {order.Status === 'Canceled' && <Text style={styles.canceledStatus}>{order.Status}</Text>}
+              {order.Status === 'Paid' && <Text style={styles.canceledStatus}>{order.Status}</Text>}
               {order.Status === 'Success' && <Text style={styles.successStatus}>{order.Status}</Text>}
-              {order.Status === 'Pending' && <Text style={styles.pendingStatus}>{order.Status}</Text>}
+              {/* {order.Status === 'Pending' && <Text style={styles.pendingStatus}>{order.Status}</Text>} */}
             </Text>
 
 
@@ -147,7 +153,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   canceledStatus: {
-    color: 'red',
+    color: '#26BCC7',
   },
   successStatus: {
     color: 'green',

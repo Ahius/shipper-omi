@@ -17,12 +17,26 @@ export const FetchOrderActivity = createAsyncThunk('oderActivity/fetch', async (
     } catch (error) {
         return rejectWithValue(error.respone.data);
     }
-})
+});
+
+
+export const createOrderActivity = createAsyncThunk(
+    'orderActivity/create',
+    async ({ CustomerOrderId, requestData }) => {
+        try {
+            const response = await axios.post(`https://onlinemarket-api.nguyenminhhai.us/api/v1/order-activity/${CustomerOrderId}`, requestData);
+            return response.data;
+        } catch (error) {
+
+            throw error;
+        }
+    }
+);
 
 
 
 const activitySlice = createSlice({
-    name:'orderActivity',
+    name: 'orderActivity',
     initialState: {
         error: null,
         loading: false,
@@ -47,6 +61,21 @@ const activitySlice = createSlice({
             .addCase(FetchOrderActivity.rejected, (state, action) => {
 
                 state.error = action.payload;
+            });
+
+        builder
+            .addCase(createOrderActivity.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(createOrderActivity.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.auth.shipperId = action.payload.shipperId; 
+            })
+            
+            .addCase(createOrderActivity.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Something went wrong.';
             });
     },
 });
