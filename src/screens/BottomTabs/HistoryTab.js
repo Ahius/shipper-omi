@@ -8,6 +8,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'rea
 import { FetchshipperOrders } from '../../redux/reducers/shipperHistorySlice';
 import { ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 
 const HistoryTab = () => {
   const dispatch = useDispatch();
@@ -23,11 +24,6 @@ const HistoryTab = () => {
     }
   }, [dispatch, shipperId, selectedStatus]);
 
-  const refetchData = () => {
-    if (shipperId !== null) {
-      dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus }));
-    }
-  };
   // console.log('data his', shipperOrders);
   const handleStatusChange = (status) => {
     setSelectedStatus(status);
@@ -43,43 +39,43 @@ const HistoryTab = () => {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
-// =======
-//     return (
-//       <SafeAreaView
-//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-//       >
-//         <StatusBar style="auto" />
-//         <Text>Loading...</Text>
-//       </SafeAreaView>
-//     );
-//   }
+  // =======
+  //     return (
+  //       <SafeAreaView
+  //         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //       >
+  //         <StatusBar style="auto" />
+  //         <Text>Loading...</Text>
+  //       </SafeAreaView>
+  //     );
+  //   }
 
-//   if (shipperOrders.length === 0) {
-//     return (
-//       <SafeAreaView
-//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-//       >
-//         <StatusBar style="auto" />
-//         <Text>No orders to display</Text>
-//       </SafeAreaView>
-//     );
-//   }
-// >>>>>>> e5461d6655a574e0abda073bcaabd4e8afa12c98
+  //   if (shipperOrders.length === 0) {
+  //     return (
+  //       <SafeAreaView
+  //         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //       >
+  //         <StatusBar style="auto" />
+  //         <Text>No orders to display</Text>
+  //       </SafeAreaView>
+  //     );
+  //   }
+  // >>>>>>> e5461d6655a574e0abda073bcaabd4e8afa12c98
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tổng đơn hàng</Text>
       <View style={styles.statusButtons}>
         <TouchableOpacity onPress={() => handleStatusChange('Success')} style={[styles.statusButton, selectedStatus === 'Success' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, selectedStatus === 'Success' && styles.selectedButtonText]}>Success</Text>
+          <Text style={[styles.buttonText, selectedStatus === 'Success' && styles.selectedButtonText]}>Thành công</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleStatusChange('Paid')} style={[styles.statusButton, selectedStatus === 'Paid' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, selectedStatus === 'Paid' && styles.selectedButtonText]}>Paid</Text>
+          <Text style={[styles.buttonText, selectedStatus === 'Paid' && styles.selectedButtonText]}>Đang vận chuyển</Text>
         </TouchableOpacity>
         {/* <TouchableOpacity onPress={() => handleStatusChange('Pending')} style={[styles.statusButton, selectedStatus === 'Pending' && styles.selectedButton]}>
           <Text style={[styles.buttonText, selectedStatus === 'Pending' && styles.selectedButtonText]}>Pending</Text>
         </TouchableOpacity> */}
-        
+
 
       </View>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
@@ -87,20 +83,18 @@ const HistoryTab = () => {
           // <TouchableOpacity key={order.CustomerOrderId} style={styles.card}>
           <TouchableOpacity key={order.CustomerOrderId} style={styles.card} onPress={() => handleOrderPress(order.CustomerOrderId)}>
             <Image source={require('../../../assets/images/image-history-orders.jpg')} style={styles.image} />
-
             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, color: '#62BEB0' }}>Tòa nhà: {order.BuildingName}</Text>
             <Text style={{ textAlign: 'left', marginBottom: 6 }}>Trạng thái thanh toán: {order.PayingStatus}</Text>
             <Text style={{ textAlign: 'left', marginBottom: 6 }}>Hoa hồng: {order.ShippingPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Text>
             <Text style={styles.statusText}>
               Trạng thái: {' '}
-              {order.Status === 'Paid' && <Text style={styles.canceledStatus}>{order.Status}</Text>}
-              {order.Status === 'Success' && <Text style={styles.successStatus}>{order.Status}</Text>}
+              {order.Status === 'Paid' && <Text style={styles.canceledStatus}>Đã thanh toán</Text>}
+              {order.Status === 'Success' && <Text style={styles.successStatus}>Thành công</Text>}
               {/* {order.Status === 'Pending' && <Text style={styles.pendingStatus}>{order.Status}</Text>} */}
             </Text>
-
-
-            <Text style={{ fontSize: 11, color: 'grey', marginTop: 4, textAlign: 'left' }}>Thời gian: {order.OrderDate}</Text>
+            <Text style={{ fontSize: 11, color: 'grey', marginTop: 4, textAlign: 'left' }}>Thời gian:   {moment.utc(order.OrderDate).format('DD/MM/YYYY - HH:mm')}</Text>
           </TouchableOpacity>
+
         ))
         ) : (
           <Text style={styles.noOrderText}>Hiện chưa có đơn hàng nào</Text>

@@ -38,7 +38,7 @@ const shipperSlice = createSlice({
             .addCase(FetchshipperOrders.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.data = action.payload;
-                console.log('Data from API:', action.payload); 
+                // console.log('Data from API:', action.payload); 
             })
             .addCase(FetchshipperOrders.rejected, (state, action) => {
                 state.status = 'failed';

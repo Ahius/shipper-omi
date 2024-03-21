@@ -6,6 +6,7 @@ import userSlice from './userSlice';
 import shipperHistorySlice from './shipperHistorySlice';
 import orderSlice from './orderSlice';
 import orderActivitySlice from './orderActivitySlice';
+import notificationSlice from './notificationSlice';
 
 
 const rootReducer = combineReducers({
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   orderDetail: orderSlice,
   user: userSlice,
   orderActivity: orderActivitySlice,
+  noti: notificationSlice,
 
 });
 

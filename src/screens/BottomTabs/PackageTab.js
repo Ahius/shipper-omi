@@ -4,14 +4,15 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
-import 'moment/locale/vi';
+
 
 
 
 import { FetchOrderActivity, createOrderActivity } from '../../redux/reducers/orderActivitySlice';
 import { Modal } from 'react-native-paper';
 import moment from 'moment';
-import 'moment/locale/vi';
+
+
 export default function PackageTab() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -20,13 +21,28 @@ export default function PackageTab() {
   const orderActivity = useSelector(state => state.orderActivity.data);
   const [isModalVisible, setModalVisible] = useState(false);
   const shipperId = useSelector(state => state.auth.shipperId);
+  const [status, setStatus] = useState('');
   const [createData, setCreateData] = useState({
     shipperId: '',
-    Status: '',
+    Status: orderActivity.length > 0 ? orderActivity[orderActivity.length - 1].Status : '',
     Image: ''
   });
-  // moment.locale('vi');
-  // moment.tz.setDefault('Asia/Ho_Chi_Minh');
+
+  // console.log('status ban dau', createData);
+  // console.log('ss', orderActivity[orderActivity.length - 1].Status);
+
+  useEffect(() => {
+    if (orderActivity && orderActivity.length > 0) {
+      const latestStatus = orderActivity[orderActivity.length - 1].Status;
+      setCreateData(prevData => ({
+        ...prevData,
+        Status: latestStatus
+      }));
+    }
+  }, [orderActivity]);
+
+
+
 
   useEffect(() => {
     setCreateData(prevData => ({
@@ -35,17 +51,57 @@ export default function PackageTab() {
     }));
   }, [shipperId]);
 
-  const [status, setStatus] = useState('');
+
+
+  // const handleCheckBoxPress = (value) => {
+  //   setStatus(value);
+  // };
+
+
 
   const handleCheckBoxPress = (value) => {
+    if (createData.Status === 'Success') {
+      return;
+    }
+
+    if (createData.Status === 'Shipping' && value !== 'Success') {
+      return;
+    }
+
+    if (createData.Status === 'Buying' && value !== 'Shipping') {
+      return;
+    }
+
+    if (value === 'Buying' && createData.Status !== 'Shipping') {
+      return;
+    }
+
     setStatus(value);
+
+    // if (currentStatus === value) {
+    //   setStatus('');
+    //   setCurrentStatus('');
+    // } else {
+    //   setStatus(value);
+    //   setCurrentStatus(value);
+    // }
+
+    // if (currentStatus === value && value === 'Success') {
+    //   setStatus('');
+    //   setCurrentStatus('');
+    //   setIsSuccessClicked(true);
+    // } else {
+    //   setStatus(value);
+    //   setCurrentStatus(value);
+    //   setIsSuccessClicked(false);
+    // }
   };
-  console.log("status: ", status);
+
+
   useEffect(() => {
     dispatch(FetchOrderActivity({ CustomerOrderId: orderId }));
   }, [dispatch, orderId]);
 
-  // console.log("shipper id:", shipperId);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -63,40 +119,6 @@ export default function PackageTab() {
     getCreateData('Status', status);
   }, [status]);
 
-
-
-
-  // const getCreateData = (key, value) => {
-  //   setCreateData({ ...createData, [key]: value });
-  // }
-
-  // if (!ImagePicker.launchImageLibraryAsync) {
-  //   console.log('ImagePicker is not available on this platform.');
-  //   return;
-  // }
-
-  // const handleImagePicker = async () => {
-  //   const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-  //   if (permissionResult.granted === false) {
-  //     alert("Permission to access camera roll is required!");
-  //     return;
-  //   }
-
-  //   if (!ImagePicker.launchImageLibraryAsync) {
-  //     console.log('ImagePicker is not available on this platform.');
-  //     return;
-  //   }
-
-  //   const result = await ImagePicker.launchImageLibraryAsync();
-
-  //   if (!result.cancelled) {
-  //     // Process the selected image
-  //     getCreateData('Image', result.uri);
-  //   }
-  // };
-
-
   const getCreateData = (key, value) => {
     setCreateData(prevData => ({
       ...prevData,
@@ -106,11 +128,14 @@ export default function PackageTab() {
 
 
   const handleSubmit = () => {
+
     const transformedData = {
       ShipperId: createData.shipperId,
       Status: createData.Status,
       Image: createData.Image
     };
+
+    // Dispatch action để tạo order activity
     dispatch(createOrderActivity({ CustomerOrderId: orderId, requestData: transformedData }))
       .then((response) => {
         console.log('Order activity has been created:', response.payload);
@@ -129,7 +154,12 @@ export default function PackageTab() {
   };
 
 
-  // console.log("data create", createData);
+
+
+
+
+  // console.log('dataaaaaa:', orderActivity);
+
 
   return (
     <View style={{ alignItems: "center", justifyContent: "center", flex: 1, marginTop: 70 }}>
@@ -160,25 +190,32 @@ export default function PackageTab() {
                       <Text style={styles.text}>Tòa nhà: {ac.BuildingName}</Text>
                       <Text style={{ textAlign: 'right', fontSize: 16, color: '#526ECD', marginRight: 8, padding: 7, borderRadius: 16, borderWidth: 1, borderColor: '#526ECD', backgroundColor: '#526ECD', color: 'white' }}>Mã đơn: {ac.OrderId}</Text>
                     </View>
-                    <Text style={styles.text}>Khách hàng: {ac.Name}</Text>
-                    <Text style={styles.text}>Điện thoại: {ac.Phone}</Text>
+                    <Text style={styles.text}>Khách hàng: {ac.Customer_Name}</Text>
+                    <Text style={styles.text}>Điện thoại: {ac.Customer_Phone}</Text>
                   </TouchableOpacity>
 
                 )}
               </View>
               <View style={{ flexDirection: 'row', height: 80 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 10, width: 380 }}>
-                  <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginLeft: 5 }}>
+                  <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginLeft: 15 }}>
                     <Text style={{ fontSize: 12, color: 'grey', marginBottom: 19, marginRight: 5 }}>Thời gian</Text>
                     <View style={{ flexDirection: 'column-reverse', flex: 1 }}>
-                      <Text style={{ fontSize: 12, color: 'grey', marginBottom: 5 }}>{ac.Date}</Text>
+                      <Text style={{ fontSize: 12, color: 'grey', marginBottom: 5 }}>
+                        {moment.utc(ac.Date).format('DD/MM/YYYY - HH:mm')}
+                      </Text>
                     </View>
+
                   </View>
-                  <View style={{ width: 1, backgroundColor: 'grey', height: '100%', marginHorizontal: 10, marginLeft: 32 }}></View>
+                  <View style={{ width: 1, backgroundColor: 'grey', height: '100%', marginHorizontal: 10, marginLeft: 51 }}></View>
                   <View style={{ flexDirection: 'column', alignItems: 'flex-end', marginLeft: 30 }}>
                     <Text style={{ fontSize: 12, color: 'grey', marginBottom: 5, marginRight: 2 }}>Trạng thái</Text>
                     <Text style={[styles.status, styles.circle, { backgroundColor: getStatusColor(ac.Status) }]}>
-                      {ac.Status}
+                      {/* {ac.Status} */}
+                      {/* Trạng thái: {' '} */}
+                      {ac.Status === 'Buying' && <Text style={styles.canceledStatus}>Đang mua hàng</Text>}
+                      {ac.Status === 'Shipping' && <Text style={styles.canceledStatus}>Đang giao hàng</Text>}
+                      {ac.Status === 'Success' && <Text style={styles.successStatus}>Đã giao hàng</Text>}
                     </Text>
                   </View>
                 </View>
@@ -200,29 +237,28 @@ export default function PackageTab() {
 
       <Modal visible={isModalVisible} onRequestClose={toggleModal}>
         <View style={styles.modalContent}>
-          <Text style={{ bottom: 70, fontSize: 17, color: '#1E90AC' }}>Cập nhật quá trình giao hàng</Text>
           <View style={styles.container}>
-            <TouchableOpacity
-              style={[styles.checkBox, status === 'Shipping' && styles.checked]}
-              onPress={() => handleCheckBoxPress('Shipping')}
-            >
-              <Text style={[styles.checkBoxText, status === 'Shipping' && styles.checkedText]}>Shipping</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               style={[styles.checkBox, status === 'Buying' && styles.checked]}
               onPress={() => handleCheckBoxPress('Buying')}
             >
-              <Text style={[styles.checkBoxText, status === 'Buying' && styles.checkedText]}>Buying</Text>
+              <Text style={[styles.checkBoxText, status === 'Buying' && styles.checkedText]}>Mua hàng</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.checkBox, status === 'Shipping' && styles.checked]}
+              onPress={() => handleCheckBoxPress('Shipping')}
+            >
+              <Text style={[styles.checkBoxText, status === 'Shipping' && styles.checkedText]}>Vận chuyển</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.checkBox, status === 'Success' && styles.checked]}
               onPress={() => handleCheckBoxPress('Success')}
             >
-              <Text style={[styles.checkBoxText, status === 'Success' && styles.checkedText]}>Success</Text>
+              <Text style={[styles.checkBoxText, status === 'Success' && styles.checkedText]}>Thành công</Text>
             </TouchableOpacity>
           </View>
           <TextInput
-            placeholder="Image"
+            placeholder="Hình ảnh"
             onChangeText={(value) => {
               getCreateData('Image', value);
             }}
@@ -235,7 +271,7 @@ export default function PackageTab() {
               <Text style={styles.buttonText}>Cập nhật</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.hideButton} onPress={toggleModal}>
-              <Text style={styles.buttonText}>Hide</Text>
+              <Text style={styles.buttonText}>Hủy</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -312,7 +348,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 30,
     color: 'white',
-    fontWeight: 'bold',
     borderRadius: 10,
   },
 
@@ -332,9 +367,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     bottom: 50,
+
   },
   checkBox: {
-    backgroundColor: '#44C8D2',
+    backgroundColor: '#44C8D2', 
     borderRadius: 10,
     paddingVertical: 5,
     paddingHorizontal: 7,
@@ -395,7 +431,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E90AC',
   },
   checkBoxText: {
-    color: '#000',
+    color: '#000000',
   },
   checkedText: {
     color: '#fff',
