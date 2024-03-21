@@ -143,10 +143,10 @@ export default function HomeTab() {
               </Text>
             </Icon>
           </View>
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {shipperOrders.length > 0 ? (
-              shipperOrders.map((order) => (
-                <View>
+              shipperOrders.map((order, index) => (
+                <View key={index}>
                   <Text
                     style={{
                       fontSize: 20,
