@@ -19,7 +19,22 @@ import { FetchshipperOrders } from "../redux/reducers/shipperHistorySlice";
 
 
 const Tab = createBottomTabNavigator();
+const ProfileStack = createNativeStackNavigator();
 
+const ProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen
+      name="Hồ sơ người dùng"
+      component={ProfileTab}
+      options={{}}
+    />
+    <ProfileStack.Screen
+      name="EditProfile"
+      component={EditProfileTab}
+      options={{ title: "Chỉnh sửa thông tin người dùng" }}
+    />
+  </ProfileStack.Navigator>
+);
 export default function AppNavigation() {
 
   const shipperId = useSelector(state => state.auth.shipperId);
@@ -39,13 +54,13 @@ export default function AppNavigation() {
   //   dispatch(FetchNotification({ ShipperId: shipperId }));
   // }, [dispatch, shipperId]);
 
-  // useEffect(() => {
-  //   if (notiData && Array.isArray(notiData) && notiData.length > 0) {
-  //     const hasNew = notiData.some(item => item.readStatus === 0);
-  //     setHasNewNotification(hasNew);
-  //     setIconName(hasNew ? 'bell-ring' : 'bell');
-  //   }
-  // }, [notiData, JSON.stringify(notiData)]);
+  useEffect(() => {
+    if (notiData && Array.isArray(notiData) && notiData.length > 0) {
+      const hasNew = notiData.some(item => item.readStatus === 0);
+      setHasNewNotification(hasNew);
+      setIconName(hasNew ? 'bell-ring' : 'bell');
+    }
+  }, [notiData, JSON.stringify(notiData)]);
 
   const handleTabPress = () => {
     dispatch(updateNoti({ id: shipperId }))
@@ -103,7 +118,7 @@ export default function AppNavigation() {
 
       <Tab.Screen
         name="Profile"
-        component={ProfileTab}
+        component={ProfileStackScreen}
         options={{
           headerShown: false,
           tabBarLabel: "Tôi",
