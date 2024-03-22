@@ -44,6 +44,7 @@ const Login = ({ navigation }) => {
             <View style={styles.middleContainer}>
                 <View style={styles.formContainer}>
                     <Text style={styles.text}>Đăng nhập</Text>
+                    {error && <Text style={styles.errorText}>{error}</Text>}
                     <TextInput
                         style={styles.input}
                         placeholder="Nhập Số Điện Thoại"
@@ -62,7 +63,7 @@ const Login = ({ navigation }) => {
                     <TouchableOpacity style={styles.button} onPress={handleLogin}>
                         <Text style={styles.buttonText}>Đăng nhập</Text>
                     </TouchableOpacity>
-                    {error && <Text style={styles.errorText}>{error}</Text>}
+
                     <TouchableOpacity onPress={handleRegister}>
                         <Text>Bạn chưa có tài khoản? <Text style={{ marginTop: 10, color: '#DA5628', textAlign: 'center', marginLeft:6 }}>Đăng ký ngay</Text></Text>
                     </TouchableOpacity>

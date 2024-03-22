@@ -152,7 +152,7 @@ const RegisterForm = () => {
                             defaultValue=""
                         />
                         <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                        {errors.Name && <Text style={styles.errorText}>Name is required</Text>}
+                        {errors.Name && <Text style={styles.errorText}>Họ tên không được bỏ trống!</Text>}
 
                         <Controller
                             control={control}
@@ -173,7 +173,7 @@ const RegisterForm = () => {
                             defaultValue=""
                         />
                         <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                        {errors.Phone && <Text style={styles.errorText}>Phone is required</Text>}
+                        {errors.Phone && <Text style={styles.errorText}>Số điện thoại không được bỏ trống!</Text>}
 
                         <Controller
                             control={control}
@@ -194,7 +194,7 @@ const RegisterForm = () => {
                             defaultValue=""
                         />
                         <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                        {errors.Email && <Text style={styles.errorText}>Email is required</Text>}
+                        {errors.Email && <Text style={styles.errorText}>Email không được bỏ trống!</Text>}
 
 
 
@@ -209,7 +209,7 @@ const RegisterForm = () => {
                         </View>
 
                         <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                        {errors.Gender && <Text style={styles.errorText}>Gender is required</Text>}
+                        {errors.Gender && <Text style={styles.errorText}>Giới tính không được bỏ trống!</Text>}
 
 
                         <Controller
@@ -231,7 +231,7 @@ const RegisterForm = () => {
                             defaultValue=""
                         />
                         <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                        {errors.CCCD && <Text style={styles.errorText}>CCCD is required</Text>}
+                        {errors.CCCD && <Text style={styles.errorText}>CCCD không được bỏ trống!</Text>}
 
                         <Controller
                             control={control}
@@ -253,7 +253,7 @@ const RegisterForm = () => {
                             defaultValue=""
                         />
                         <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                        {errors.Password && <Text style={styles.errorText}>Password is required</Text>}
+                        {errors.Password && <Text style={styles.errorText}>Mật khẩu không được bỏ trống!</Text>}
 
 
                         <Controller
@@ -278,7 +278,7 @@ const RegisterForm = () => {
                             defaultValue=""
                         />
 
-                        {errors.AreaId && <Text style={styles.errorText}>AreaId is required</Text>}
+                        {errors.AreaId && <Text style={styles.errorText}>Khu vực không được bỏ trống!</Text>}
 
                         <TouchableOpacity
                             style={styles.button}

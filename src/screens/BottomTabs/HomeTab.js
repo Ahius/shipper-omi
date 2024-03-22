@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: "#ccc",
     width: 360,
-    height: 300,
+    height: 450,
   },
 
   trackingContent: {
@@ -334,4 +334,12 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     marginTop: 20,
   },
+
+  noOrderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
+    color: 'grey',
+  }
 });

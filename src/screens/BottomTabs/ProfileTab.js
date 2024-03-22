@@ -58,9 +58,9 @@ export default function ProfileTab({ navigation }) {
     try {
       if (shipperId) {
         setIsLoading(true);
-        setIsRefreshing(true); // Đặt trạng thái refreshing thành true khi bắt đầu làm mới
+        setIsRefreshing(true);
         await dispatch(profileUser({ ShipperId: shipperId }));
-        setIsRefreshing(false); // Đặt trạng thái refreshing thành false khi hoàn thành làm mới
+        setIsRefreshing(false);
         setIsLoading(false);
       }
     } catch (error) {
@@ -142,11 +142,7 @@ export default function ProfileTab({ navigation }) {
         {shipperData && (
           <View style={{}}>
             <View style={{}}>
-              <View style={{ alignItems: "center" }}>
-                {/* <Text style={{ fontWeight: "bold", fontSize: 30 }}>{shipperData.Name}</Text>
-              <Caption style={styles.caption}>{shipperData.Email}</Caption> */}
-              </View>
-
+              <View style={{ alignItems: "center" }}></View>
               <View style={styles.infoBoxWrapper}>
                 <View style={styles.infoBox}>
                   <Title>{shipperData.Balance}</Title>
@@ -163,14 +159,12 @@ export default function ProfileTab({ navigation }) {
                   <View style={styles.row}>
                     <Icon name="human-male-female" size={30} />
                     <Text style={styles.userInfoText}>
-                
                       {genderMapping[shipperData.Gender]}
                     </Text>
                   </View>
                   <View style={styles.row}>
                     <Icon name="map-marker-radius" size={30} />
                     <Text style={styles.userInfoText}>
-                   
                       {shipperData.AreaName}
                     </Text>
                   </View>
@@ -217,6 +211,7 @@ const styles = StyleSheet.create({
     width: "95%",
     margin: 10,
     paddingLeft: 10,
+    paddingVertical: 10,
   },
 
   row: {
@@ -229,7 +224,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 26,
-    marginLeft: 20
+    marginLeft: 20,
   },
 
   infoBoxWrapper: {
@@ -239,6 +234,7 @@ const styles = StyleSheet.create({
     width: "50%",
     alignSelf: "center",
     backgroundColor: "#fff",
+    padding: 20,
   },
 
   infoBox: {
@@ -251,6 +247,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "95%",
     margin: 10,
+    paddingVertical: 10,
   },
 
   menuItem: {
@@ -277,8 +274,7 @@ const styles = StyleSheet.create({
 
   logoutButton: {
     backgroundColor: "#ff0000",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    padding: 20,
     borderRadius: 999,
     width: "50%",
   },
