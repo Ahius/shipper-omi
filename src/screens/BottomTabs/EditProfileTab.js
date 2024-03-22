@@ -27,8 +27,10 @@ import { useNavigation } from "@react-navigation/native";
 export default function EditProfileTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notification, setNotification] = useState(null);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
   const shipperId = useSelector((state) => state.auth.shipperId);
   const shipperData = useSelector((state) => state.user.data);
   const areaData = useSelector((state) => state.area);
@@ -79,6 +81,20 @@ export default function EditProfileTab() {
   };
 
   const handleProfileUpdate = async () => {
+    // Validate email format
+    const emailRegex = /\b[A-Za-z0-9._%+-]+@gmail\.com\b/;
+    if (!emailRegex.test(profileUpdate.Email)) {
+      setNotification("Email phải có định dạng @gmail.com");
+      return;
+    }
+
+    // Validate phone number length
+    const phoneNumberLength = profileUpdate.Phone.length;
+    if (phoneNumberLength !== 10 && phoneNumberLength !== 12) {
+      setNotification("Số điện thoại phải có 10 hoặc 12 số");
+      return;
+    }
+
     console.log("Updated: ", profileUpdate);
     try {
       const response = await dispatch(
@@ -138,90 +154,84 @@ export default function EditProfileTab() {
 
   return (
     <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-  >
-    <View style={{ flex: 1 }}>
-      <View style={{ margin: 20 }}>
-        <View style={{ alignItems: "center" }}>
-          <TouchableOpacity onPress={() => {}}>
-            <View
-              style={{
-                height: 90,
-                width: 90,
-                borderRadius: 15,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ImageBackground
-                source={images.shipperImg}
-                style={{ height: 100, width: 100 }}
-                imageStyle={{ borderRadius: 999 }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                </View>
-              </ImageBackground>
-            </View>
-          </TouchableOpacity>
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      {notification && (
+        <View style={styles.notificationContainer}>
+          <Text style={styles.notificationText}>{notification}</Text>
+        </View>
+      )}
 
-          <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>
-            {shipperData.Name}
-          </Text>
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" size={24} />
-          <TextInput
-            placeholder="Họ và Tên"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={styles.textInput}
-            value={profileUpdate.Name}
-            onChangeText={(value) => handleTextInputChange("Name", value)}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="envelope-o" size={24} />
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={styles.textInput}
-            value={profileUpdate.Email}
-            onChangeText={(value) => handleTextInputChange("Email", value)}
-          />
-        </View>
-        <View style={styles.action}>
-          <Feather name="phone" size={24} />
-          <TextInput
-            placeholder="Số điện thoại"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={styles.textInput}
-            value={profileUpdate.Phone}
-            keyboardType="numeric"
-            onChangeText={(value) => handleTextInputChange("Phone", value)}
-          />
-        </View>
-        {/* <View style={styles.action}>
-          <Icon name="human-male-female" size={24} />
-          <TextInput
-            placeholder="Giới tính"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={styles.textInput}
-            value={profileUpdate.Gender}
-            onChangeText={(value) => handleTextInputChange("Gender", value)}
-          />
-        </View> */}
-         <View style={styles.genderContainer}>
-         <Icon name="human-male-female" size={24} />
+      <View style={{ flex: 1 }}>
+        <View style={{ margin: 20 }}>
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity onPress={() => {}}>
+              <View
+                style={{
+                  height: 90,
+                  width: 90,
+                  borderRadius: 15,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <ImageBackground
+                  source={images.shipperImg}
+                  style={{ height: 100, width: 100 }}
+                  imageStyle={{ borderRadius: 999 }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  ></View>
+                </ImageBackground>
+              </View>
+            </TouchableOpacity>
+
+            <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>
+              {shipperData.Name}
+            </Text>
+          </View>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" size={24} />
+            <TextInput
+              placeholder="Họ và Tên"
+              placeholderTextColor="#666666"
+              autoCorrect={false}
+              style={styles.textInput}
+              value={profileUpdate.Name}
+              onChangeText={(value) => handleTextInputChange("Name", value)}
+            />
+          </View>
+          <View style={styles.action}>
+            <FontAwesome name="envelope-o" size={24} />
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor="#666666"
+              autoCorrect={false}
+              style={styles.textInput}
+              value={profileUpdate.Email}
+              onChangeText={(value) => handleTextInputChange("Email", value)}
+            />
+          </View>
+          <View style={styles.action}>
+            <Feather name="phone" size={24} />
+            <TextInput
+              placeholder="Số điện thoại"
+              placeholderTextColor="#666666"
+              autoCorrect={false}
+              style={styles.textInput}
+              value={profileUpdate.Phone}
+              keyboardType="numeric"
+              onChangeText={(value) => handleTextInputChange("Phone", value)}
+            />
+          </View>
+          <View style={styles.genderContainer}>
+            <Icon name="human-male-female" size={24} />
             <Text style={{ marginRight: 10 }}>Giới tính</Text>
             <TouchableOpacity
               style={{ flexDirection: "row", alignItems: "center" }}
@@ -247,32 +257,36 @@ export default function EditProfileTab() {
               <Text>Nữ</Text>
             </TouchableOpacity>
           </View>
-        <View style={styles.action}>
-          <Icon name="map-marker-radius" size={24} style={{ marginTop: 15 }} />
-          <Picker
-            selectedValue={profileUpdate.AreaId}
-            style={styles.textInput}
-            onValueChange={(itemValue) =>
-              handleTextInputChange("AreaId", itemValue)
-            }
+          <View style={styles.action}>
+            <Icon
+              name="map-marker-radius"
+              size={24}
+              style={{ marginTop: 15 }}
+            />
+            <Picker
+              selectedValue={profileUpdate.AreaId}
+              style={styles.textInput}
+              onValueChange={(itemValue) =>
+                handleTextInputChange("AreaId", itemValue)
+              }
+            >
+              {areaData.data.map((area) => (
+                <Picker.Item
+                  key={area.AreaId}
+                  label={area.AreaName}
+                  value={area.AreaId}
+                />
+              ))}
+            </Picker>
+          </View>
+          <TouchableOpacity
+            style={styles.commandButton}
+            onPress={handleProfileUpdate}
           >
-            {areaData.data.map((area) => (
-              <Picker.Item
-                key={area.AreaId}
-                label={area.AreaName}
-                value={area.AreaId}
-              />
-            ))}
-          </Picker>
+            <Text style={styles.panelButtonTitle}>Thay đổi</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.commandButton}
-          onPress={handleProfileUpdate}
-        >
-          <Text style={styles.panelButtonTitle}>Thay đổi</Text>
-        </TouchableOpacity>
       </View>
-    </View>
     </KeyboardAvoidingView>
   );
 }
@@ -288,7 +302,7 @@ const styles = StyleSheet.create({
   action: {
     flexDirection: "row",
     marginTop: 10,
-    marginBottom: 40,
+    marginBottom: 32,
     borderBottomWidth: 1,
     borderBottomColor: "#737170",
     paddingBottom: 10,
@@ -313,5 +327,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#737170",
     paddingBottom: 15,
+  },
+
+  notificationContainer: {
+    backgroundColor: '#ff0000', 
+    padding: 2, 
+    borderRadius: 5, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+  },
+  notificationText: {
+    color: '#ffffff', 
+    fontSize: 16, 
+    fontWeight: 'bold', 
   },
 });

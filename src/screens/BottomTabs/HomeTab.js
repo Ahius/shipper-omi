@@ -320,4 +320,12 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     marginTop: 20,
   },
+
+  noOrderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
+    color: 'grey',
+  }
 });
