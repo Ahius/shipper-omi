@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import {
   ActivityIndicator,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,6 +17,7 @@ import { useEffect, useState } from "react";
 
 import { profileUser } from "../../redux/reducers/userSlice";
 import { FetchshipperOrders } from "../../redux/reducers/shipperHistorySlice";
+import { FetchNotification } from "../../redux/reducers/notificationSlice";
 
 export default function HomeTab() {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,9 +29,21 @@ export default function HomeTab() {
   const shipperId = useSelector((state) => state.auth.shipperId);
   const shipperData = useSelector((state) => state.user.data);
   const shipperOrders = useSelector((state) => state.shipperOder.data);
+  const notiData = useSelector(state => state.noti.data);
+  const [hasNewNotification, setHasNewNotification] = useState(false);
+  useEffect(() => {
+    dispatch(FetchNotification({ ShipperId: shipperId }));
+  }, [dispatch, shipperId]);
 
   useEffect(() => {
-    console.log(selectedStatus);
+    if (notiData && Array.isArray(notiData) && notiData.length > 0) {
+      const hasNew = notiData.some(item => item.readStatus === 0);
+      setHasNewNotification(hasNew);
+    }
+  }, [notiData, JSON.stringify(notiData)]);
+
+  useEffect(() => {
+    // console.log(selectedStatus);
     if (shipperId !== null) {
       dispatch(
         FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus })
@@ -37,7 +51,7 @@ export default function HomeTab() {
     }
   }, [dispatch, shipperId, selectedStatus]);
 
-  console.log("data his", shipperOrders);
+  // console.log("data his", shipperOrders);
 
   useEffect(() => {
     const fetchData = async () => {

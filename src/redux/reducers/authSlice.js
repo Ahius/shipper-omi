@@ -45,16 +45,36 @@ const authSlice = createSlice({
       .addCase(login.pending, (state) => {
         state.loading = true;
       })
+      // .addCase(login.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.token = action.payload.data.token;
+      //   state.error = null;
+      //   state.shipperId = action.payload.data.shipper.ShipperId;
+      //   // Lưu token vào AsyncStorage
+      //   AsyncStorage.setItem('token', state.token)
+      //     .then(() => console.log('Token saved to AsyncStorage'))
+      //     .catch(error => console.error('Error saving token to AsyncStorage:', error));
+      // })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload.data.token;
-        state.error = null;
-        state.shipperId = action.payload.data.shipper.ShipperId;
-        // Lưu token vào AsyncStorage
-        AsyncStorage.setItem('token', state.token)
-          .then(() => console.log('Token saved to AsyncStorage'))
-          .catch(error => console.error('Error saving token to AsyncStorage:', error));
+        if (action.payload && action.payload.data && action.payload.data.token) {
+          state.token = action.payload.data.token;
+          state.error = null;
+          if (action.payload.data.shipper && action.payload.data.shipper.ShipperId) {
+            state.shipperId = action.payload.data.shipper.ShipperId;
+          } else {
+            state.error = "Invalid shipper data received from server.";
+          }
+          // Lưu token vào AsyncStorage
+          AsyncStorage.setItem('token', state.token)
+            .then(() => console.log('Token saved to AsyncStorage'))
+            .catch(error => console.error('Error saving token to AsyncStorage:', error));
+        } else {
+          state.error = "Invalid response format from server.";
+        }
       })
+      
+
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;

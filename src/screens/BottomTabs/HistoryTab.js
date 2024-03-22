@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
-
-
-
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, RefreshControl } from 'react-native';
 
 import { FetchshipperOrders } from '../../redux/reducers/shipperHistorySlice';
 import { ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 
 const HistoryTab = () => {
   const dispatch = useDispatch();
   const [selectedStatus, setSelectedStatus] = useState('Success');
+  const [isRefreshing, setIsRefreshing] = useState(false); // State for RefreshControl
   const shipperOrders = useSelector(state => state.shipperOder.data);
   const shipperId = useSelector(state => state.auth.shipperId);
 
@@ -19,16 +18,16 @@ const HistoryTab = () => {
     console.log(selectedStatus);
     if (shipperId !== null) {
       dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus }));
-
     }
   }, [dispatch, shipperId, selectedStatus]);
 
-  const refetchData = () => {
-    if (shipperId !== null) {
-      dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus }));
-    }
+  const onRefresh = () => {
+    setIsRefreshing(true); // Start refreshing
+    dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus })).then(() => {
+      setIsRefreshing(false); // End refreshing
+    });
   };
-  // console.log('data his', shipperOrders);
+
   const handleStatusChange = (status) => {
     setSelectedStatus(status);
   };
@@ -43,62 +42,38 @@ const HistoryTab = () => {
     return <ActivityIndicator size="large" color="#0000ff" style={{flex: 1, justifyContent: "center", alignItems: "center" }}/>;
   }
 
-// =======
-//     return (
-//       <SafeAreaView
-//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-//       >
-//         <StatusBar style="auto" />
-//         <Text>Loading...</Text>
-//       </SafeAreaView>
-//     );
-//   }
-
-//   if (shipperOrders.length === 0) {
-//     return (
-//       <SafeAreaView
-//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-//       >
-//         <StatusBar style="auto" />
-//         <Text>No orders to display</Text>
-//       </SafeAreaView>
-//     );
-//   }
-// >>>>>>> e5461d6655a574e0abda073bcaabd4e8afa12c98
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tổng đơn hàng</Text>
       <View style={styles.statusButtons}>
         <TouchableOpacity onPress={() => handleStatusChange('Success')} style={[styles.statusButton, selectedStatus === 'Success' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, selectedStatus === 'Success' && styles.selectedButtonText]}>Success</Text>
+          <Text style={[styles.buttonText, selectedStatus === 'Success' && styles.selectedButtonText]}>Thành công</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleStatusChange('Paid')} style={[styles.statusButton, selectedStatus === 'Paid' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, selectedStatus === 'Paid' && styles.selectedButtonText]}>Paid</Text>
+          <Text style={[styles.buttonText, selectedStatus === 'Paid' && styles.selectedButtonText]}>Đang vận chuyển</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => handleStatusChange('Pending')} style={[styles.statusButton, selectedStatus === 'Pending' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, selectedStatus === 'Pending' && styles.selectedButtonText]}>Pending</Text>
-        </TouchableOpacity> */}
-        
-
       </View>
-      <ScrollView contentContainerStyle={styles.cardsContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.cardsContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
         {shipperOrders.length > 0 ? (shipperOrders.map(order => (
           <TouchableOpacity key={order.CustomerOrderId} style={styles.card} onPress={() => handleOrderPress(order.CustomerOrderId)}>
             <Image source={require('../../../assets/images/image-history-orders.jpg')} style={styles.image} />
-
             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, color: '#62BEB0' }}>Tòa nhà: {order.BuildingName}</Text>
             <Text style={{ textAlign: 'left', marginBottom: 6 }}>Trạng thái thanh toán: {order.PayingStatus}</Text>
             <Text style={{ textAlign: 'left', marginBottom: 6 }}>Hoa hồng: {order.ShippingPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Text>
             <Text style={styles.statusText}>
               Trạng thái: {' '}
-              {order.Status === 'Paid' && <Text style={styles.canceledStatus}>{order.Status}</Text>}
-              {order.Status === 'Success' && <Text style={styles.successStatus}>{order.Status}</Text>}
-              {/* {order.Status === 'Pending' && <Text style={styles.pendingStatus}>{order.Status}</Text>} */}
+              {order.Status === 'Paid' && <Text style={styles.canceledStatus}>Đã thanh toán</Text>}
+              {order.Status === 'Success' && <Text style={styles.successStatus}>Thành công</Text>}
             </Text>
-
-
-            <Text style={{ fontSize: 11, color: 'grey', marginTop: 4, textAlign: 'left' }}>Thời gian: {order.OrderDate}</Text>
+            <Text style={{ fontSize: 11, color: 'grey', marginTop: 4, textAlign: 'left' }}>Thời gian:   {moment.utc(order.OrderDate).format('DD/MM/YYYY - HH:mm')}</Text>
           </TouchableOpacity>
         ))
         ) : (
