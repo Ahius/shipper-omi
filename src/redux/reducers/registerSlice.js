@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from '../../../axios/axiosConfig.js';
 
 export const registerShipper = createAsyncThunk(
   'shipper/register',
   async (shipperData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('https://onlinemarket-api.nguyenminhhai.us/api/v1/shipper?action=register', shipperData);
+      const response = await axios.post('/shipper?action=register', shipperData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

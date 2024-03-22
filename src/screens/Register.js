@@ -409,15 +409,22 @@
 // export default RegisterForm;
 
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, ImageBackground, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, ImageBackground, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import { registerShipper } from '../redux/reducers/registerSlice';
 import { fetchArea } from '../redux/reducers/areaSlice';
+import { useNavigation } from '@react-navigation/native';
 
 const RegisterForm = () => {
     const areaData = useSelector((state) => state.area);
+    const navigation = useNavigation();
+    const [gender, setGender] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     // console.log('area: ', areaData);
     const dispatch = useDispatch();
     useEffect(() => {
@@ -425,13 +432,15 @@ const RegisterForm = () => {
     }, []);
 
 
-
+    const handleGoBack = () => {
+        navigation.goBack();
+    };
 
     const pickerItems = areaData.data ? areaData.data.map(area => ({
         label: area.AreaName,
         value: area.AreaId.toString()
     })) : [];
-    
+
 
 
     const [shipper, setShipper] = useState({
@@ -445,217 +454,252 @@ const RegisterForm = () => {
         Password: '',
     });
     const { control, handleSubmit, formState: { errors } } = useForm();
-
+    const handleGenderSelect = (selectedGender) => {
+        setGender(selectedGender);
+        getShipperData('Gender', selectedGender);
+    };
     const getShipperData = (key, value) => {
+
         setShipper({ ...shipper, [key]: value });
     }
 
+
+
+
     const onSubmit = (data) => {
-        dispatch(registerShipper(data))
+        if (isNaN(data.CCCD) || isNaN(data.Phone) || data.CCCD === '' || data.Phone === '') {
+            setErrorMessage('CCCD and Phone must be numbers');
+            return;
+        }
+
+
+        if (!/^\d{12}$/.test(data.CCCD)) {
+            setErrorMessage('CCCD must be a 12-digit number');
+            return;
+        }
+
+        if (!/^\d{10,12}$/.test(data.Phone)) {
+            setErrorMessage('Phone must be a 10-12-digit number');
+            return;
+        }
+
+        const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
+        if (!specialChars.test(data.Password)) {
+            setErrorMessage('Password must contain special characters');
+            return;
+        }
+
+        if (!data.Email.endsWith('@gmail.com')) {
+            setErrorMessage('Email must be a Gmail address');
+            return;
+        }
+
+        const shipperData = {
+            ...data,
+            Gender: shipper.Gender,
+            Status: shipper.Status
+        };
+
+
+        dispatch(registerShipper(shipperData))
             .then((response) => {
                 console.log('Shipper registered:', response);
+                setSuccessMessage('Shipper registered successfully');
+                setErrorMessage('');
             })
             .catch((error) => {
                 console.error('Error registering shipper:', error);
+                setErrorMessage('Error registering shipper');
+
             });
     };
 
+
+    // console.log('data cr: ', shipper);
     return (
 
         <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -150}
         >
-            <View style={styles.container}>
-                <View style={styles.formContainer}>
-                    <Image
-                        source={{ uri: 'https://bambooship.cdn.vccloud.vn/wp-content/uploads/2021/11/shipper-1-1.png' }}
-                        style={styles.image}
-                    />
-                    <Text style={styles.title}>Đăng ký trở thành tài xế giao hàng</Text>
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Name"
-                                onBlur={onBlur}
-                                onChangeText={(value) => {
-                                    onChange(value);
-                                    getShipperData('Name', value);
-                                }}
-                                value={value}
-                            />
+
+            <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
+                <Icon name="arrow-back" size={18} color="grey" style={{ marginTop: 20 }} />
+            </TouchableOpacity>
+
+            <ScrollView>
+                <View style={styles.container}>
+
+                    <View style={styles.formContainer}>
+                        <Image
+                            source={require('../../assets/images/login-out.png')}
+                            style={styles.image}
+                        />
+                        <Text style={styles.title}>Đăng ký trở thành tài xế giao hàng</Text>
+                        {errorMessage !== '' && (
+                            <Text style={styles.errorText}>{errorMessage}</Text>
                         )}
-                        name="Name"
-                        rules={{ required: true }}
-                        defaultValue=""
-                    />
-                    <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                    {errors.Name && <Text style={styles.errorText}>Name is required</Text>}
-
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Phone"
-                                onBlur={onBlur}
-                                onChangeText={(value) => {
-                                    onChange(value);
-                                    getShipperData('Phone', value);
-                                }}
-                                value={value}
-                            />
+                        {successMessage !== '' && (
+                            <Text style={styles.successText}>{successMessage}</Text>
                         )}
-                        name="Phone"
-                        rules={{ required: true }}
-                        defaultValue=""
-                    />
-                    <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                    {errors.Phone && <Text style={styles.errorText}>Phone is required</Text>}
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Name"
+                                    onBlur={onBlur}
+                                    onChangeText={(value) => {
+                                        onChange(value);
+                                        getShipperData('Name', value);
+                                    }}
+                                    value={value}
+                                />
+                            )}
+                            name="Name"
+                            rules={{ required: true }}
+                            defaultValue=""
+                        />
+                        <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
+                        {errors.Name && <Text style={styles.errorText}>Name is required</Text>}
 
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Email"
-                                onBlur={onBlur}
-                                onChangeText={(value) => {
-                                    onChange(value);
-                                    getShipperData('Email', value);
-                                }}
-                                value={value}
-                            />
-                        )}
-                        name="Email"
-                        rules={{ required: true }}
-                        defaultValue=""
-                    />
-                    <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                    {errors.Email && <Text style={styles.errorText}>Email is required</Text>}
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Phone"
+                                    onBlur={onBlur}
+                                    onChangeText={(value) => {
+                                        onChange(value);
+                                        getShipperData('Phone', value);
+                                    }}
+                                    value={value}
+                                />
+                            )}
+                            name="Phone"
+                            rules={{ required: true }}
+                            defaultValue=""
+                        />
+                        <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
+                        {errors.Phone && <Text style={styles.errorText}>Phone is required</Text>}
 
-
-
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Gender"
-                                onBlur={onBlur}
-                                onChangeText={(value) => {
-                                    onChange(value);
-                                    getShipperData('Gender', value);
-                                }}
-                                value={value}
-                            />
-                        )}
-                        name="Gender"
-                        rules={{ required: true }}
-                        defaultValue=""
-                    />
-                    <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                    {errors.Gender && <Text style={styles.errorText}>Gender is required</Text>}
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Status"
-                                onBlur={onBlur}
-                                onChangeText={(value) => {
-                                    onChange(value);
-                                    getShipperData('Status', value);
-                                }}
-                                value={value}
-                            />
-                        )}
-                        name="Status"
-                        rules={{ required: true }}
-                        defaultValue=""
-                    />
-                    <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                    {errors.Status && <Text style={styles.errorText}>Status is required</Text>}
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Email"
+                                    onBlur={onBlur}
+                                    onChangeText={(value) => {
+                                        onChange(value);
+                                        getShipperData('Email', value);
+                                    }}
+                                    value={value}
+                                />
+                            )}
+                            name="Email"
+                            rules={{ required: true }}
+                            defaultValue=""
+                        />
+                        <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
+                        {errors.Email && <Text style={styles.errorText}>Email is required</Text>}
 
 
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="CCCD"
-                                onBlur={onBlur}
-                                onChangeText={(value) => {
-                                    onChange(value);
-                                    getShipperData('CCCD', value);
-                                }}
-                                value={value}
-                            />
-                        )}
-                        name="CCCD"
-                        rules={{ required: true }}
-                        defaultValue=""
-                    />
-                    <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                    {errors.CCCD && <Text style={styles.errorText}>CCCD is required</Text>}
 
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Password"
-                                onBlur={onBlur}
-                                onChangeText={(value) => {
-                                    onChange(value);
-                                    getShipperData('Password', value);
-                                }}
-                                value={value}
-                            />
-                        )}
-                        name="Password"
-                        rules={{ required: true }}
-                        defaultValue=""
-                    />
-                    <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
-                    {errors.Password && <Text style={styles.errorText}>Password is required</Text>}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, marginTop: 10, marginLeft: 10 }}>
+                            <Text>Giới tính:</Text>
+                            <TouchableOpacity onPress={() => handleGenderSelect('Female')}>
+                                <Text style={{ color: gender === 'Female' ? 'blue' : 'black', marginLeft: 5 }}>Nam</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => handleGenderSelect('Male')}>
+                                <Text style={{ color: gender === 'Male' ? 'blue' : 'black', marginLeft: 10, marginRight: 10 }}>Nữ</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
+                        {errors.Gender && <Text style={styles.errorText}>Gender is required</Text>}
 
 
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <RNPickerSelect
-                                style={styles}
-                                onValueChange={(itemValue) => {
-                                    onChange(itemValue);
-                                    getShipperData('AreaId', itemValue);
-                                }}
-                                items={[
-                                    { label: 'Select Area', value: '' },
-                                    ...pickerItems 
-                                ]}
-                                onBlur={onBlur}
-                                value={value}
-                            />
-                        )}
-                        name="AreaId"
-                        rules={{ required: true }}
-                        defaultValue=""
-                    />
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="CCCD"
+                                    onBlur={onBlur}
+                                    onChangeText={(value) => {
+                                        onChange(value);
+                                        getShipperData('CCCD', value);
+                                    }}
+                                    value={value}
+                                />
+                            )}
+                            name="CCCD"
+                            rules={{ required: true }}
+                            defaultValue=""
+                        />
+                        <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
+                        {errors.CCCD && <Text style={styles.errorText}>CCCD is required</Text>}
 
-                    {errors.AreaId && <Text style={styles.errorText}>AreaId is required</Text>}
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Password"
+                                    onBlur={onBlur}
+                                    onChangeText={(value) => {
+                                        onChange(value);
+                                        getShipperData('Password', value);
+                                    }}
+                                    value={value}
+                                    secureTextEntry={true}
+                                />
+                            )}
+                            name="Password"
+                            rules={{ required: true }}
+                            defaultValue=""
+                        />
+                        <View style={{ borderBottomWidth: 0.4, borderBottomColor: 'black', width: '90%', marginLeft: 9 }} />
+                        {errors.Password && <Text style={styles.errorText}>Password is required</Text>}
 
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={handleSubmit(onSubmit)}
-                    >
-                        <Text style={styles.buttonText}>Submit</Text>
-                    </TouchableOpacity>
+
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <RNPickerSelect
+                                    style={styles}
+                                    onValueChange={(itemValue) => {
+                                        onChange(itemValue);
+                                        getShipperData('AreaId', itemValue);
+                                    }}
+                                    items={[
+                                        { label: 'Select Area', value: '' },
+                                        ...pickerItems
+                                    ]}
+                                    onBlur={onBlur}
+                                    value={value}
+                                />
+                            )}
+                            name="AreaId"
+                            rules={{ required: true }}
+                            defaultValue=""
+                        />
+
+                        {errors.AreaId && <Text style={styles.errorText}>AreaId is required</Text>}
+
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleSubmit(onSubmit)}
+                        >
+                            <Text style={styles.buttonText}>Submit</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
+
         </KeyboardAvoidingView>
     );
 };
@@ -712,7 +756,15 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red',
         marginBottom: 10,
+        marginLeft: 8,
+        marginTop: 6
     },
+    successText: {
+        color: 'green',
+        marginBottom: 10,
+        marginLeft: 8,
+        marginTop: 6
+    }
 });
 
 export default RegisterForm;

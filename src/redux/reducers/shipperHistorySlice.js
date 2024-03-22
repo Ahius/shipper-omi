@@ -1,11 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from '../../../axios/axiosConfig.js';
 
 export const FetchshipperOrders = createAsyncThunk('shipper/fetchOders', async ({ ShipperId, status }, { rejectWithValue }) => {
     try {
         const token = AsyncStorage.getItem('token');
-        const response = await axios.get(`https://onlinemarket-api.nguyenminhhai.us/api/v1/customer-order/shipper/${ShipperId}?status=${status}`, {
+        const response = await axios.get(`/customer-order/shipper/${ShipperId}?status=${status}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             },

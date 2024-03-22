@@ -37,9 +37,9 @@ const Login = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <ImageBackground source={{ uri: 'https://png.pngtree.com/thumb_back/fw800/back_pic/02/65/88/135788e18a62b79.jpg' }} style={styles.topBackground}>
+            <ImageBackground source={require('../../assets/images/login-head-b.jpg')} style={styles.topBackground}>
                 <View style={styles.overlay}></View>
-                <Image source={{ uri: 'https://bambooship.cdn.vccloud.vn/wp-content/uploads/2021/11/shipper-1-1.png' }} style={styles.logo} />
+                <Image source={require('../../assets/images/login-out.png')} style={styles.logo} />
             </ImageBackground>
             <View style={styles.middleContainer}>
                 <View style={styles.formContainer}>
@@ -64,11 +64,11 @@ const Login = ({ navigation }) => {
                     </TouchableOpacity>
                     {error && <Text style={styles.errorText}>{error}</Text>}
                     <TouchableOpacity onPress={handleRegister}>
-                        <Text style={{ marginTop: 10, color: '#DA5628', textAlign: 'center' }}>Đăng ký</Text>
+                        <Text>Bạn chưa có tài khoản? <Text style={{ marginTop: 10, color: '#DA5628', textAlign: 'center', marginLeft:6 }}>Đăng ký ngay</Text></Text>
                     </TouchableOpacity>
                 </View>
             </View>
-            <ImageBackground source={{ uri: 'https://t4.ftcdn.net/jpg/04/19/98/19/360_F_419981971_jftDSPRJGskIgVirQqtKLItcFdEZ4Zve.jpg' }} style={styles.topBackground2}>
+            <ImageBackground source={require('../../assets/images/login-bottom.jpg')} style={styles.topBackground2}>
                 {/* <View style={styles.overlay}></View> */}
             </ImageBackground>
         </View>
@@ -90,18 +90,18 @@ const styles = StyleSheet.create({
         flex: 0.25,
         justifyContent: 'center',
         alignItems: 'center',
-        borderTopLeftRadius: 35, 
-        borderTopRightRadius: 35, 
-        overflow: 'hidden', 
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
+        overflow: 'hidden',
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.5)', // Điều chỉnh độ mờ và màu sắc của lớp nền
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     logo: {
         width: 150,
         height: 150,
-        borderRadius: 75, 
+        borderRadius: 75,
     },
     middleContainer: {
         flex: 0.6,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     errorText: {
-        color:'red'
+        color: 'red'
     }
 });
 
