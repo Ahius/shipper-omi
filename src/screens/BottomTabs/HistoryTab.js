@@ -21,12 +21,14 @@ const HistoryTab = () => {
     }
   }, [dispatch, shipperId, selectedStatus]);
 
+
   const onRefresh = () => {
     setIsRefreshing(true); // Start refreshing
     dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus })).then(() => {
       setIsRefreshing(false); // End refreshing
     });
   };
+
 
   const handleStatusChange = (status) => {
     setSelectedStatus(status);
@@ -42,16 +44,33 @@ const HistoryTab = () => {
     return <ActivityIndicator size="large" color="#0000ff" style={{flex: 1, justifyContent: "center", alignItems: "center" }}/>;
   }
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tổng đơn hàng</Text>
-      <View style={styles.statusButtons}>
-        <TouchableOpacity onPress={() => handleStatusChange('Success')} style={[styles.statusButton, selectedStatus === 'Success' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, selectedStatus === 'Success' && styles.selectedButtonText]}>Thành công</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleStatusChange('Paid')} style={[styles.statusButton, selectedStatus === 'Paid' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, selectedStatus === 'Paid' && styles.selectedButtonText]}>Đang vận chuyển</Text>
-        </TouchableOpacity>
+
+  // =======
+  //     return (
+  //       <SafeAreaView
+  //         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //       >
+  //         <StatusBar style="auto" />
+  //         <Text>Loading...</Text>
+  //       </SafeAreaView>
+  //     );
+  //   }
+
+  //   if (shipperOrders.length === 0) {
+  //     return (
+  //       <SafeAreaView
+  //         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //       >
+  //         <StatusBar style="auto" />
+  //         <Text>No orders to display</Text>
+  //       </SafeAreaView>
+  //     );
+  //   }
+  // >>>>>>> e5461d6655a574e0abda073bcaabd4e8afa12c98
+
+
+
+
       </View>
       <ScrollView
         contentContainerStyle={styles.cardsContainer}
@@ -72,9 +91,12 @@ const HistoryTab = () => {
               Trạng thái: {' '}
               {order.Status === 'Paid' && <Text style={styles.canceledStatus}>Đã thanh toán</Text>}
               {order.Status === 'Success' && <Text style={styles.successStatus}>Thành công</Text>}
-            </Text>
+
+              {/* {order.Status === 'Pending' && <Text style={styles.pendingStatus}>{order.Status}</Text>} */}
+
             <Text style={{ fontSize: 11, color: 'grey', marginTop: 4, textAlign: 'left' }}>Thời gian:   {moment.utc(order.OrderDate).format('DD/MM/YYYY - HH:mm')}</Text>
           </TouchableOpacity>
+
         ))
         ) : (
           <Text style={styles.noOrderText}>Hiện chưa có đơn hàng nào</Text>
