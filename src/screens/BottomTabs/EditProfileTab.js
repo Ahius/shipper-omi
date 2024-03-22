@@ -166,16 +166,6 @@ export default function EditProfileTab() {
                     alignItems: "center",
                   }}
                 >
-                  <Icon
-                    name="camera"
-                    size={35}
-                    color="#fff"
-                    style={{
-                      opacity: 0.7,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  />
                 </View>
               </ImageBackground>
             </View>

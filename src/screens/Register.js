@@ -525,7 +525,7 @@ const RegisterForm = () => {
         >
 
             <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
-                <Icon name="arrow-back" size={18} color="grey" style={{ marginTop: 20 }} />
+                <Icon name="arrow-back" size={18} color="grey" style={{ marginTop: 40, marginLeft:20}} />
             </TouchableOpacity>
 
             <ScrollView>
@@ -611,10 +611,10 @@ const RegisterForm = () => {
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, marginTop: 10, marginLeft: 10 }}>
                             <Text>Giới tính:</Text>
                             <TouchableOpacity onPress={() => handleGenderSelect('Female')}>
-                                <Text style={{ color: gender === 'Female' ? 'blue' : 'black', marginLeft: 5 }}>Nam</Text>
+                                <Text style={{ color: gender === 'Female' ? '#DA5628' : 'black', marginLeft: 5 }}>Nam</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => handleGenderSelect('Male')}>
-                                <Text style={{ color: gender === 'Male' ? 'blue' : 'black', marginLeft: 10, marginRight: 10 }}>Nữ</Text>
+                                <Text style={{ color: gender === 'Male' ? '#DA5628' : 'black', marginLeft: 10, marginRight: 10 }}>Nữ</Text>
                             </TouchableOpacity>
                         </View>
 

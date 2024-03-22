@@ -7,6 +7,8 @@ import {
   Button,
   ActivityIndicator,
   TouchableOpacity,
+  RefreshControl,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../../constants";
@@ -21,6 +23,7 @@ import { logout } from "../../redux/reducers/authSlice";
 export default function ProfileTab({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
   const shipperId = useSelector((state) => state.auth.shipperId);
@@ -28,13 +31,13 @@ export default function ProfileTab({ navigation }) {
 
   const handleLogout = () => {
     dispatch(logout());
-    console.log('Logged out successfully');
-    navigation.navigate('Login');
+    console.log("Logged out successfully");
+    navigation.navigate("Login");
   };
 
   const genderMapping = {
-    Male: 'Nam',
-    Female: 'Nữ',
+    Male: "Nam",
+    Female: "Nữ",
   };
 
   React.useLayoutEffect(() => {
@@ -51,22 +54,26 @@ export default function ProfileTab({ navigation }) {
     });
   }, [navigation]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (shipperId) {
-          setIsLoading(true);
-          await dispatch(profileUser({ ShipperId: shipperId }));
-          setIsLoading(false);
-        }
-      } catch (error) {
+  const fetchData = async () => {
+    try {
+      if (shipperId) {
+        setIsLoading(true);
+        setIsRefreshing(true); // Đặt trạng thái refreshing thành true khi bắt đầu làm mới
+        await dispatch(profileUser({ ShipperId: shipperId }));
+        setIsRefreshing(false); // Đặt trạng thái refreshing thành false khi hoàn thành làm mới
         setIsLoading(false);
-        setError(error.message);
       }
-    };
+    } catch (error) {
+      setIsLoading(false);
+      setError(error.message);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [dispatch, shipperId]);
+
+  console.log("Balance: ", shipperData.Balance);
 
   if (isLoading) {
     return (
@@ -101,91 +108,100 @@ export default function ProfileTab({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f2f7" }}>
-      <View style={styles.imageWrapper}>
-        <StatusBar style="auto" />
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={fetchData} />
+      }
+    >
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f2f7" }}>
+        <View style={styles.imageWrapper}>
+          <StatusBar style="auto" />
 
-        <View style={{ alignItems: "center" }}>
-          <Image
-            source={images.shipperImg}
-            resizeMode="contain"
-            style={{
-              height: 90,
-              width: 90,
-              borderRadius: 999,
-              borderColor: "#ccc",
-              borderWidth: 2,
-              marginTop: -30,
-            }}
-          />
           <View style={{ alignItems: "center" }}>
-            <Text style={{ fontWeight: "bold", fontSize: 25 }}>
-              {shipperData.Name}
-            </Text>
-            <Caption style={styles.caption}>{shipperData.Email}</Caption>
-          </View>
-        </View>
-      </View>
-
-      {shipperData && (
-        <View style={{}}>
-          <View style={{}}>
+            <Image
+              source={images.shipperImg}
+              resizeMode="contain"
+              style={{
+                height: 90,
+                width: 90,
+                borderRadius: 999,
+                borderColor: "#ccc",
+                borderWidth: 2,
+                marginTop: -30,
+              }}
+            />
             <View style={{ alignItems: "center" }}>
-              {/* <Text style={{ fontWeight: "bold", fontSize: 30 }}>{shipperData.Name}</Text>
-              <Caption style={styles.caption}>{shipperData.Email}</Caption> */}
+              <Text style={{ fontWeight: "bold", fontSize: 25 }}>
+                {shipperData.Name}
+              </Text>
+              <Caption style={styles.caption}>{shipperData.Email}</Caption>
             </View>
+          </View>
+        </View>
 
-            <View style={styles.infoBoxWrapper}>
-              <View style={styles.infoBox}>
-                <Title>{shipperData.Balance}</Title>
-                <Caption style={styles.caption}> Điểm tín dụng</Caption>
-              </View>
-            </View>
+        {shipperData && (
+          <View style={{}}>
             <View style={{}}>
-              <View style={styles.userInfoSection}>
-                <View style={styles.row}>
-                  <Icon name="phone" size={25} />
-                  <Text style={styles.menuItemText}>{shipperData.Phone}</Text>
-                </View>
+              <View style={{ alignItems: "center" }}>
+                {/* <Text style={{ fontWeight: "bold", fontSize: 30 }}>{shipperData.Name}</Text>
+              <Caption style={styles.caption}>{shipperData.Email}</Caption> */}
+              </View>
 
-                <View style={styles.row}>
-                  <Icon name="human-male-female" size={25} />
-                  <Text style={styles.menuItemText}> {genderMapping[shipperData.Gender]}</Text>
+              <View style={styles.infoBoxWrapper}>
+                <View style={styles.infoBox}>
+                  <Title>{shipperData.Balance}</Title>
+                  <Caption style={styles.caption}> Điểm tín dụng</Caption>
                 </View>
-                <View style={styles.row}>
-                  <Icon name="map-marker-radius" size={25} />
-                  <Text style={styles.menuItemText}>
-                    {" "}
-                    {shipperData.AreaName}
-                  </Text>
+              </View>
+              <View style={{}}>
+                <View style={styles.userInfoSection}>
+                  <View style={styles.row}>
+                    <Icon name="phone" size={30} />
+                    <Text style={styles.userInfoText}>{shipperData.Phone}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Icon name="human-male-female" size={30} />
+                    <Text style={styles.userInfoText}>
+                
+                      {genderMapping[shipperData.Gender]}
+                    </Text>
+                  </View>
+                  <View style={styles.row}>
+                    <Icon name="map-marker-radius" size={30} />
+                    <Text style={styles.userInfoText}>
+                   
+                      {shipperData.AreaName}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
           </View>
-        </View>
-      )}
-      <View style={styles.menuWrapper}>
-        <View style={styles.menuItem}>
-          <Icon name="credit-card" size={25} />
-          <Text style={styles.menuItemText}>Payment</Text>
-        </View>
+        )}
+        <View style={styles.menuWrapper}>
+          <View style={styles.menuItem}>
+            <Icon name="credit-card" size={30} />
+            <Text style={styles.menuItemText}>Thẻ Tín Dụng</Text>
+          </View>
 
-        <View style={styles.menuItem}>
-          <Icon name="account-check-outline" size={25} />
-          <Text style={styles.menuItemText}>Support</Text>
-        </View>
+          <View style={styles.menuItem}>
+            <Icon name="account-check-outline" size={30} />
+            <Text style={styles.menuItemText}>Hỗ Trợ Người Dùng</Text>
+          </View>
 
-        <View style={styles.menuItem}>
-          <IonIcon name="settings-outline" size={25} />
-          <Text style={styles.menuItemText}>Settings</Text>
+          <View style={styles.menuItem}>
+            <IonIcon name="settings-outline" size={30} />
+            <Text style={styles.menuItemText}>Cài Đặt</Text>
+          </View>
         </View>
-      </View>
-      <View style={{ alignItems: "center" }}>
+        <View style={{ alignItems: "center" }}>
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>Đăng xuất</Text>
           </TouchableOpacity>
         </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScrollView>
   );
 }
 
@@ -200,24 +216,28 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "95%",
     margin: 10,
+    paddingLeft: 10,
   },
 
   row: {
     flexDirection: "row",
-    padding: 10
+    padding: 10,
   },
 
   userInfoText: {
-    marginLeft: 10,
+    color: "#777777",
+    fontWeight: "600",
+    fontSize: 20,
+    lineHeight: 26,
+    marginLeft: 20
   },
 
   infoBoxWrapper: {
     margin: 10,
     borderColor: "#dddddd",
     borderRadius: 10,
-    width: "95%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: "50%",
+    alignSelf: "center",
     backgroundColor: "#fff",
   },
 
@@ -227,7 +247,6 @@ const styles = StyleSheet.create({
   },
 
   menuWrapper: {
-    marginTop: 10,
     backgroundColor: "#fff",
     borderRadius: 10,
     width: "95%",
@@ -244,30 +263,30 @@ const styles = StyleSheet.create({
     color: "#777777",
     marginLeft: 20,
     fontWeight: "600",
-    fontSize: 16,
+    fontSize: 20,
     lineHeight: 26,
   },
 
   imageWrapper: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    height: 150,
+    height: 130,
     width: "95%",
     margin: 10,
   },
 
   logoutButton: {
-    backgroundColor: '#ff0000',
+    backgroundColor: "#ff0000",
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 10,
     borderRadius: 999,
-    width: "50%"
+    width: "50%",
   },
 
   logoutButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
-    textAlign: "center"
+    textAlign: "center",
   },
 });
