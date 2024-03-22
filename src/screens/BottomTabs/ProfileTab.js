@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "95%",
     margin: 10,
-    padding: 10,
+    paddingLeft: 10,
   },
 
   row: {
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 26,
-   marginLeft: 20
+    marginLeft: 20
   },
 
   infoBoxWrapper: {
@@ -248,7 +248,6 @@ const styles = StyleSheet.create({
   },
 
   menuWrapper: {
-    marginTop: 10,
     backgroundColor: "#fff",
     borderRadius: 10,
     width: "95%",
@@ -257,7 +256,7 @@ const styles = StyleSheet.create({
 
   menuItem: {
     flexDirection: "row",
-    padding: 12,
+    padding: 10,
     marginLeft: 10,
   },
 
@@ -272,16 +271,15 @@ const styles = StyleSheet.create({
   imageWrapper: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    height: 150,
+    height: 130,
     width: "95%",
     margin: 10,
-    marginTop: 50
   },
 
   logoutButton: {
     backgroundColor: "#ff0000",
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 10,
     borderRadius: 999,
     width: "50%",
   },
