@@ -162,6 +162,7 @@ console.log('cData: ', createData);
         dispatch(FetchOrderActivity({ CustomerOrderId: orderId }))
           .then(() => {
             console.log('Order activity data has been updated', response.payload);
+            showSuccessMessage('Trạng thái đơn hơn đã được cập nhât!');
           })
           .catch((error) => {
             console.error('Error fetching updated order activity data:', error);
@@ -171,6 +172,11 @@ console.log('cData: ', createData);
         console.error('Error creating Order activity:', error);
       });
   };
+
+  const showSuccessMessage = (message) => {
+
+    alert(message); 
+};
 
 
 
