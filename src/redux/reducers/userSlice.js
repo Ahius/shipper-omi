@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import axios from '../../../axios/axiosConfig.js';
 
 export const profileUser = createAsyncThunk(
   "user/profile",
@@ -8,7 +9,7 @@ export const profileUser = createAsyncThunk(
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.get(
-        `https://onlinemarket-api.nguyenminhhai.us/api/v1/shipper/${ShipperId}`,
+        `/shipper/${ShipperId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -32,7 +33,7 @@ export const updateProfile = createAsyncThunk(
       // console.log("Id: ", ShipperId);
       // console.log("Data: ", profileUpdate);
       const response = await axios.put(
-        `https://onlinemarket-api.nguyenminhhai.us/api/v1/shipper/${ShipperId}`,
+        `/shipper/${ShipperId}`,
         profileUpdate,
         {
           headers: {
@@ -52,7 +53,7 @@ export const updateProfile = createAsyncThunk(
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    data: null, // Initial state for shipper data
+    data: null, 
     loading: false,
     error: null,
   },
@@ -69,7 +70,7 @@ const userSlice = createSlice({
       .addCase(profileUser.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
-        state.error = null; // Clear error on successful fetch
+        state.error = null; 
       })
       .addCase(profileUser.rejected, (state, action) => {
         state.loading = false;
@@ -83,7 +84,7 @@ const userSlice = createSlice({
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
-        state.error = null; // Clear error on successful update
+        state.error = null; 
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false;

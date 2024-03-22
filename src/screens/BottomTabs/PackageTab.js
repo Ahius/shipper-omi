@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Button, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Button, TextInput, RefreshControl } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +22,7 @@ export default function PackageTab() {
   const [isModalVisible, setModalVisible] = useState(false);
   const shipperId = useSelector(state => state.auth.shipperId);
   const [status, setStatus] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [createData, setCreateData] = useState({
     shipperId: '',
     // Status: orderActivity.length > 0 ? orderActivity[orderActivity.length - 1].Status : '',
@@ -39,8 +40,7 @@ export default function PackageTab() {
       }));
     }
   }, [orderActivity]);
-
-
+console.log('cData: ', createData);
 
 
   useEffect(() => {
@@ -59,32 +59,42 @@ export default function PackageTab() {
 
 
   const handleCheckBoxPress = (value) => {
-    if (createData.Status === 'Success') {
+    if (createData.Status === 'Success' || (createData.Status === 'Buying' && value === 'Success')) {
+      // Nếu Status là 'Success' hoặc Status là 'Buying' và value là 'Success', không làm gì cả
       return;
     }
-
+  
     if (createData.Status === 'Shipping' && value !== 'Success') {
+      // Nếu Status là 'Shipping' nhưng value không phải 'Success', không làm gì cả
       return;
     }
-
+  
     if (createData.Status === 'Buying' && value !== 'Shipping') {
+      // Nếu Status là 'Buying' nhưng value không phải 'Shipping', không làm gì cả
       return;
     }
 
-    if (value === 'Buying' && createData.Status !== 'Shipping') {
-      return;
-    }
-
+  
     setStatus(value);
-
   };
+  
+
+
 
 
   useEffect(() => {
     dispatch(FetchOrderActivity({ CustomerOrderId: orderId }));
   }, [dispatch, orderId]);
 
-// console.log('log lai: ', orderActivity);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(FetchOrderActivity({ CustomerOrderId: orderId })).then(() => {
+      setIsRefreshing(false);
+    });
+  };
+
+  // console.log('log lai: ', orderActivity);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -118,7 +128,6 @@ export default function PackageTab() {
       Image: createData.Image
     };
 
-    // Dispatch action để tạo order activity
     dispatch(createOrderActivity({ CustomerOrderId: orderId, requestData: transformedData }))
       .then((response) => {
         console.log('Order activity has been created:', response.payload);
@@ -162,7 +171,14 @@ export default function PackageTab() {
       </View>
 
 
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
         {orderActivity ? (
           orderActivity.map((ac, index) => (
             <TouchableOpacity key={ac.OrderActivityId}>
@@ -241,7 +257,7 @@ export default function PackageTab() {
             </TouchableOpacity>
           </View>
           <TextInput
-            placeholder="Hình ảnh"
+            placeholder="Nội dung"
             onChangeText={(value) => {
               getCreateData('Image', value);
             }}
@@ -380,7 +396,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#1E90AC'
+    color: '#E84D2C'
   },
 
   boxInfo: {

@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import {
   ActivityIndicator,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -10,7 +11,6 @@ import {
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import Icon2 from "react-native-vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -29,18 +29,21 @@ export default function HomeTab() {
   const shipperId = useSelector((state) => state.auth.shipperId);
   const shipperData = useSelector((state) => state.user.data);
   const shipperOrders = useSelector((state) => state.shipperOder.data);
-  const notiData = useSelector(state => state.noti.data);
-  const [hasNewNotification, setHasNewNotification] = useState(false);
-  useEffect(() => {
-    dispatch(FetchNotification({ ShipperId: shipperId }));
-  }, [dispatch, shipperId]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  useEffect(() => {
-    if (notiData && Array.isArray(notiData) && notiData.length > 0) {
-      const hasNew = notiData.some(item => item.readStatus === 0);
-      setHasNewNotification(hasNew);
-    }
-  }, [notiData, JSON.stringify(notiData)]);
+
+  // const notiData = useSelector(state => state.noti.data);
+  // const [hasNewNotification, setHasNewNotification] = useState(false);
+  // useEffect(() => {
+  //   dispatch(FetchNotification({ ShipperId: shipperId }));
+  // }, [dispatch, shipperId]);
+
+  // useEffect(() => {
+  //   if (notiData && Array.isArray(notiData) && notiData.length > 0) {
+  //     const hasNew = notiData.some(item => item.readStatus === 0);
+  //     setHasNewNotification(hasNew);
+  //   }
+  // }, [notiData, JSON.stringify(notiData)]);
 
   useEffect(() => {
     // console.log(selectedStatus);
@@ -50,6 +53,13 @@ export default function HomeTab() {
       );
     }
   }, [dispatch, shipperId, selectedStatus]);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(FetchshipperOrders({ ShipperId: shipperId, status: selectedStatus })).then(() => {
+      setIsRefreshing(false);
+    });
+  };
 
   // console.log("data his", shipperOrders);
 
@@ -120,18 +130,18 @@ export default function HomeTab() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={{ alignItems: "center", marginVertical: 40 }}>
-          <Text style={[styles.themeText, { color: "#fff" }]}>Xin chào</Text>
+          <Text style={[ { color: "#fff", marginRight:200 }]}>   <Icon name="cloud-sun" size={25} /> Xin chào!</Text> 
           <Text style={[styles.themeText, { color: "#fff" }]}>
             {" "}
             {shipperData.Name}
           </Text>
           <Text style={{ color: "#fff" }}>
-            Bắt đầu một ngày giao hàng tuyệt vời
+            Bắt đầu một ngày giao hàng tuyệt vời! 
           </Text>
         </View>
       </View>
       <View style={styles.center}>
-        <Text style={styles.themeText}>Đơn giao hàng của bạn</Text>
+        <Text style={{marginTop:10, fontSize:20}}>Đơn giao hàng của bạn <Icon name="map-marker-alt" size={20} style={{color:'red'}} /></Text>
         <View style={styles.orderContainer}>
           <TouchableOpacity onPress={() => handlePickUp()}>
             <View style={styles.orderBox}>
@@ -145,7 +155,7 @@ export default function HomeTab() {
           </TouchableOpacity>
         </View>
         <View>
-          <Text style={styles.themeText}>Hoạt Động gần đây</Text>
+          <Text style={{marginTop:10, fontSize:20}}>Hoạt Động gần đây   <Icon name="undo" size={16} /></Text>
         </View>
 
         <View style={[styles.trackingBox, { marginTop: 20 }]}>
@@ -153,11 +163,18 @@ export default function HomeTab() {
             <Icon name="shipping-fast" size={25}>
               <Text style={styles.trackingText}>
                 {" "}
-                Lịch sử đơn hàng
+                 Lịch sử đơn hàng
               </Text>
             </Icon>
           </View>
-          <ScrollView>
+          <ScrollView
+
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={onRefresh}
+              />
+            }>
             {shipperOrders.length > 0 ? (
               shipperOrders.map((order) => (
                 <View>
@@ -232,7 +249,9 @@ const styles = StyleSheet.create({
 
   themeText: {
     fontWeight: "bold",
+    textAlign:'left',
     fontSize: 24,
+    marginTop:5
   },
 
   center: {

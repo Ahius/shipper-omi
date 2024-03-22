@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from '../../../axios/axiosConfig.js';
 
 export const fetchArea = createAsyncThunk('area/fetch', async (_, { rejectWithValue }) => {
     try {
-        const response = await axios.get('https://onlinemarket-api.nguyenminhhai.us/api/v1/area');
+        const response = await axios.get('/area');
         return response.data; 
     } catch (error) {
         if (error.response) {

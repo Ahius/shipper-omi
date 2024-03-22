@@ -10,7 +10,7 @@ import moment from 'moment';
 const HistoryTab = () => {
   const dispatch = useDispatch();
   const [selectedStatus, setSelectedStatus] = useState('Success');
-  const [isRefreshing, setIsRefreshing] = useState(false); // State for RefreshControl
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const shipperOrders = useSelector(state => state.shipperOder.data);
   const shipperId = useSelector(state => state.auth.shipperId);
 

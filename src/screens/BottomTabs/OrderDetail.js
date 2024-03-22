@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ const OrderDetail = () => {
   const { orderId } = route.params;
   const orderDetail = useSelector(state => state.orderDetail.data);
   const navigation = useNavigation();
-
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
 
   useEffect(() => {
@@ -22,6 +22,12 @@ const OrderDetail = () => {
   }, [dispatch, orderId]);
 
 
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(FetchOrderDetail({ CustomerOrderId: orderId })).then(() => {
+      setIsRefreshing(false);
+    });
+  };
   const handleGoBack = () => {
     navigation.goBack();
   };
@@ -52,7 +58,14 @@ const OrderDetail = () => {
         </TouchableOpacity>
         <Text style={styles.headerText}>Chi tiết đơn hàng</Text>
       </View>
-      <ScrollView style={styles.content}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+          />
+        }
+        style={styles.content}>
         {orderDetail.data?.map((item, index) => (
           <TouchableOpacity
             key={index}
@@ -96,7 +109,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     backgroundColor: '#ffffff',
   },
-   header: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
@@ -110,8 +123,8 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
-    textAlign:'center',
-    color:'#1E90AC',
+    textAlign: 'center',
+    color: '#E84D2C',
   },
   content: {
     flex: 1,

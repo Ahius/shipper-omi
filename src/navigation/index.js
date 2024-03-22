@@ -33,17 +33,17 @@ export default function AppNavigation() {
 
   //   }
   // }, [dispatch, shipperId]);
-  useEffect(() => {
-    dispatch(FetchNotification({ ShipperId: shipperId }));
-  }, [dispatch, shipperId]);
+  // useEffect(() => {
+  //   dispatch(FetchNotification({ ShipperId: shipperId }));
+  // }, [dispatch, shipperId]);
 
-  useEffect(() => {
-    if (notiData && Array.isArray(notiData) && notiData.length > 0) {
-      const hasNew = notiData.some(item => item.readStatus === 0);
-      setHasNewNotification(hasNew);
-      setIconName(hasNew ? 'bell-ring' : 'bell');
-    }
-  }, [notiData, JSON.stringify(notiData)]);
+  // useEffect(() => {
+  //   if (notiData && Array.isArray(notiData) && notiData.length > 0) {
+  //     const hasNew = notiData.some(item => item.readStatus === 0);
+  //     setHasNewNotification(hasNew);
+  //     setIconName(hasNew ? 'bell-ring' : 'bell');
+  //   }
+  // }, [notiData, JSON.stringify(notiData)]);
 
   const handleTabPress = () => {
     dispatch(updateNoti({ id: shipperId }))

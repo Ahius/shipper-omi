@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from '../../../axios/axiosConfig.js';
 
 
 
@@ -8,7 +8,7 @@ export const FetchNotification = createAsyncThunk('noti/fetchNotification', asyn
     try {
         const token = await AsyncStorage.getItem('token');
 
-        const respone = await axios.get(`https://onlinemarket-api.nguyenminhhai.us/api/v1/notification/${ShipperId}`, {
+        const respone = await axios.get(`/notification/${ShipperId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             },
@@ -23,7 +23,7 @@ export const updateNoti = createAsyncThunk(
     'noti/UpdateNoti',
     async ({ id }) => {
         try {
-            const response = await axios.put(`https://onlinemarket-api.nguyenminhhai.us/api/v1/notification/${id}`);
+            const response = await axios.put(`/notification/${id}`);
             return response.data;
         } catch (error) {
 

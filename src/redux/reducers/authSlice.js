@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import axios from '../../../axios/axiosConfig.js';
 
 export const login = createAsyncThunk('auth/login', async ({ Phone, Password }, { rejectWithValue }) => {
   try {
-    const response = await axios.post('https://onlinemarket-api.nguyenminhhai.us/api/v1/shipper?action=login', {
+    const response = await axios.post('/shipper?action=login', {
       Phone: Phone,
       Password: Password
     });
