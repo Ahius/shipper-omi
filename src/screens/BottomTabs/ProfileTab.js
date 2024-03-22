@@ -182,17 +182,17 @@ export default function ProfileTab({ navigation }) {
         <View style={styles.menuWrapper}>
           <View style={styles.menuItem}>
             <Icon name="credit-card" size={30} />
-            <Text style={styles.menuItemText}>Payment</Text>
+            <Text style={styles.menuItemText}>Thẻ Tín Dụng</Text>
           </View>
 
           <View style={styles.menuItem}>
             <Icon name="account-check-outline" size={30} />
-            <Text style={styles.menuItemText}>Support</Text>
+            <Text style={styles.menuItemText}>Hỗ Trợ Người Dùng</Text>
           </View>
 
           <View style={styles.menuItem}>
             <IonIcon name="settings-outline" size={30} />
-            <Text style={styles.menuItemText}>Settings</Text>
+            <Text style={styles.menuItemText}>Cài Đặt</Text>
           </View>
         </View>
         <View style={{ alignItems: "center" }}>
@@ -236,9 +236,8 @@ const styles = StyleSheet.create({
     margin: 10,
     borderColor: "#dddddd",
     borderRadius: 10,
-    width: "95%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: "50%",
+    alignSelf: "center",
     backgroundColor: "#fff",
   },
 
