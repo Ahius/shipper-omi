@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import axios from '../../../axios/axiosConfig.js';
 
 
@@ -9,6 +10,7 @@ export const FetchNotification = createAsyncThunk('noti/fetchNotification', asyn
         const token = await AsyncStorage.getItem('token');
 
         const respone = await axios.get(`/notification/${ShipperId}`, {
+
             headers: {
                 Authorization: `Bearer ${token}`
             },
@@ -18,6 +20,7 @@ export const FetchNotification = createAsyncThunk('noti/fetchNotification', asyn
         return rejectWithValue(error.respone.data);
     }
 });
+
 
 export const updateNoti = createAsyncThunk(
     'noti/UpdateNoti',
@@ -36,6 +39,7 @@ export const updateNoti = createAsyncThunk(
 
 const notiSlice = createSlice({
     name: 'noti',
+
     initialState: {
         error: null,
         loading: false,
@@ -62,6 +66,7 @@ const notiSlice = createSlice({
                 state.error = action.payload;
             });
 
+
         builder
             .addCase(updateNoti.pending, (state) => {
                 state.loading = true;
@@ -76,6 +81,7 @@ const notiSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message || 'Something went wrong.';
             });
+
 
     },
 });

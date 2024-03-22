@@ -17,9 +17,11 @@ import { FetchNotification, updateNoti } from "../redux/reducers/notificationSli
 import { FetchshipperOrders } from "../redux/reducers/shipperHistorySlice";
 
 
+
 const Tab = createBottomTabNavigator();
 
 export default function AppNavigation() {
+
   const shipperId = useSelector(state => state.auth.shipperId);
   const notiData = useSelector(state => state.noti.data);
   const [hasNewNotification, setHasNewNotification] = useState(false);
@@ -98,6 +100,7 @@ export default function AppNavigation() {
           ),
         }}
       />
+
       <Tab.Screen
         name="Profile"
         component={ProfileTab}
@@ -111,4 +114,6 @@ export default function AppNavigation() {
       />
     </Tab.Navigator>
   );
+
 }
+

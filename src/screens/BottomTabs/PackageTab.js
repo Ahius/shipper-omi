@@ -31,6 +31,12 @@ export default function PackageTab() {
   });
 
 
+
+
+  // console.log('status ban dau', createData);
+  // console.log('ss', orderActivity[orderActivity.length - 1].Status);
+
+
   useEffect(() => {
     if (orderActivity && orderActivity.length > 0) {
       const latestStatus = orderActivity[orderActivity.length - 1].Status;
@@ -40,7 +46,9 @@ export default function PackageTab() {
       }));
     }
   }, [orderActivity]);
+
 console.log('cData: ', createData);
+
 
 
   useEffect(() => {
@@ -59,6 +67,7 @@ console.log('cData: ', createData);
 
 
   const handleCheckBoxPress = (value) => {
+
     if (createData.Status === 'Success' || (createData.Status === 'Buying' && value === 'Success')) {
       // Nếu Status là 'Success' hoặc Status là 'Buying' và value là 'Success', không làm gì cả
       return;
@@ -75,16 +84,34 @@ console.log('cData: ', createData);
     }
 
   
-    setStatus(value);
-  };
-  
 
+    setStatus(value);
+
+    // if (currentStatus === value) {
+    //   setStatus('');
+    //   setCurrentStatus('');
+    // } else {
+    //   setStatus(value);
+    //   setCurrentStatus(value);
+    // }
+
+    // if (currentStatus === value && value === 'Success') {
+    //   setStatus('');
+    //   setCurrentStatus('');
+    //   setIsSuccessClicked(true);
+    // } else {
+    //   setStatus(value);
+    //   setCurrentStatus(value);
+    //   setIsSuccessClicked(false);
+    // }
+  };
 
 
 
   useEffect(() => {
     dispatch(FetchOrderActivity({ CustomerOrderId: orderId }));
   }, [dispatch, orderId]);
+
 
 
   const onRefresh = () => {
@@ -94,7 +121,7 @@ console.log('cData: ', createData);
     });
   };
 
-  // console.log('log lai: ', orderActivity);
+
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -257,7 +284,9 @@ console.log('cData: ', createData);
             </TouchableOpacity>
           </View>
           <TextInput
+
             placeholder="Nội dung"
+
             onChangeText={(value) => {
               getCreateData('Image', value);
             }}
@@ -369,7 +398,7 @@ const styles = StyleSheet.create({
 
   },
   checkBox: {
-    backgroundColor: '#44C8D2',
+    backgroundColor: '#44C8D2', 
     borderRadius: 10,
     paddingVertical: 5,
     paddingHorizontal: 7,

@@ -60,11 +60,13 @@ const authSlice = createSlice({
         if (action.payload && action.payload.data && action.payload.data.token) {
           state.token = action.payload.data.token;
           state.error = null;
+
           if (action.payload.data.shipper && action.payload.data.shipper.ShipperId) {
             state.shipperId = action.payload.data.shipper.ShipperId;
           } else {
             state.error = "Invalid shipper data received from server.";
           }
+
           // Lưu token vào AsyncStorage
           AsyncStorage.setItem('token', state.token)
             .then(() => console.log('Token saved to AsyncStorage'))
@@ -73,7 +75,7 @@ const authSlice = createSlice({
           state.error = "Invalid response format from server.";
         }
       })
-      
+
 
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
