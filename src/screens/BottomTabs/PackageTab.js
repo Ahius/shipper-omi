@@ -31,11 +31,7 @@ export default function PackageTab() {
   });
 
 
-  const [createData, setCreateData] = useState({
-    shipperId: '',
-    Status: orderActivity.length > 0 ? orderActivity[orderActivity.length - 1].Status : '',
-    Image: ''
-  });
+
 
   // console.log('status ban dau', createData);
   // console.log('ss', orderActivity[orderActivity.length - 1].Status);
