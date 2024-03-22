@@ -29,18 +29,6 @@ export default function PackageTab() {
     Image: ''
   });
 
-  // console.log('status ban dau', createData);
-  // console.log('ss', orderActivity[orderActivity.length - 1].Status);
-
-  // useEffect(() => {
-  //   if (orderActivity && orderActivity.length > 0) {
-  //     const latestStatus = orderActivity[orderActivity.length - 1].Status;
-  //     setCreateData(prevData => ({
-  //       ...prevData,
-  //       Status: latestStatus
-  //     }));
-  //   }
-  // }, [orderActivity]);
 
   useEffect(() => {
     if (orderActivity && orderActivity.length > 0) {
@@ -89,23 +77,6 @@ export default function PackageTab() {
 
     setStatus(value);
 
-    // if (currentStatus === value) {
-    //   setStatus('');
-    //   setCurrentStatus('');
-    // } else {
-    //   setStatus(value);
-    //   setCurrentStatus(value);
-    // }
-
-    // if (currentStatus === value && value === 'Success') {
-    //   setStatus('');
-    //   setCurrentStatus('');
-    //   setIsSuccessClicked(true);
-    // } else {
-    //   setStatus(value);
-    //   setCurrentStatus(value);
-    //   setIsSuccessClicked(false);
-    // }
   };
 
 
@@ -113,6 +84,7 @@ export default function PackageTab() {
     dispatch(FetchOrderActivity({ CustomerOrderId: orderId }));
   }, [dispatch, orderId]);
 
+// console.log('log lai: ', orderActivity);
 
   const handleGoBack = () => {
     navigation.goBack();

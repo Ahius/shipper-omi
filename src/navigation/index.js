@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import EditProfileTab from "../screens/BottomTabs/EditProfileTab";
 import { Touchable, TouchableOpacity } from "react-native";
 import { FetchNotification, updateNoti } from "../redux/reducers/notificationSlice";
+import { FetchshipperOrders } from "../redux/reducers/shipperHistorySlice";
 
 
 const Tab = createBottomTabNavigator();
@@ -26,7 +27,12 @@ export default function AppNavigation() {
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  // useEffect(() => {
+  //   if (shipperId !== null) {
+  //     dispatch(FetchshipperOrders({ ShipperId: shipperId, status: 'Success' }));
 
+  //   }
+  // }, [dispatch, shipperId]);
   useEffect(() => {
     dispatch(FetchNotification({ ShipperId: shipperId }));
   }, [dispatch, shipperId]);
