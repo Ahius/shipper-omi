@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: "#ccc",
     width: 360,
-    height: 300,
+    height: 450,
   },
 
   trackingContent: {
