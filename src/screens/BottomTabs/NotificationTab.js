@@ -44,7 +44,7 @@ const NotificationTab = () => {
       contentContainerStyle={styles.scrollViewContent}>
       {notifications && notifications.length > 0 ? (
         notifications.map((noti) => (
-          <TouchableOpacity key={noti.id} style={styles.notificationContainer}>
+          <TouchableOpacity key={noti.id} style={styles.card}>
             <Text style={styles.notificationTitle}>{noti.message}</Text>
             <Text style={styles.notificationDate}>
               {moment.utc(noti.date).format('DD/MM/YYYY - HH:mm')}
@@ -67,6 +67,20 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff',
   },
+
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    width: 330,
+    padding: 20,
+    marginBottom: 10,
+    marginTop:4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   header: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -78,7 +92,7 @@ const styles = StyleSheet.create({
   shipperImage: {
     width: '90%', 
     height: 160, 
-    marginBottom: 10, 
+    marginBottom: 30, 
   },
   scrollViewContent: {
     flexGrow: 1,

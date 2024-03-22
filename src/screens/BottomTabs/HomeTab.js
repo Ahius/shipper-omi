@@ -130,18 +130,18 @@ export default function HomeTab() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={{ alignItems: "center", marginVertical: 40 }}>
-          <Text style={[ { color: "#fff", marginRight:200 }]}>   <Icon name="cloud-sun" size={25} /> Xin chào!</Text> 
+          <Text style={[{ color: "#fff", marginRight: 200 }]}>   <Icon name="cloud-sun" size={25} /> Xin chào!</Text>
           <Text style={[styles.themeText, { color: "#fff" }]}>
             {" "}
             {shipperData.Name}
           </Text>
           <Text style={{ color: "#fff" }}>
-            Bắt đầu một ngày giao hàng tuyệt vời! 
+            Bắt đầu một ngày giao hàng tuyệt vời!
           </Text>
         </View>
       </View>
       <View style={styles.center}>
-        <Text style={{marginTop:10, fontSize:20}}>Đơn giao hàng của bạn <Icon name="map-marker-alt" size={20} style={{color:'red'}} /></Text>
+        <Text style={{ marginTop: 10, fontSize: 20 }}>Đơn giao hàng của bạn <Icon name="map-marker-alt" size={20} style={{ color: 'red' }} /></Text>
         <View style={styles.orderContainer}>
           <TouchableOpacity onPress={() => handlePickUp()}>
             <View style={styles.orderBox}>
@@ -155,15 +155,15 @@ export default function HomeTab() {
           </TouchableOpacity>
         </View>
         <View>
-          <Text style={{marginTop:10, fontSize:20}}>Hoạt Động gần đây   <Icon name="undo" size={16} /></Text>
+          <Text style={{ marginTop: 10, fontSize: 20 }}>Hoạt Động gần đây   <Icon name="undo" size={16} /></Text>
         </View>
 
         <View style={[styles.trackingBox, { marginTop: 20 }]}>
           <View style={styles.historyContainer}>
-            <Icon name="shipping-fast" size={25}>
+            <Icon name="tasks" size={17}>
               <Text style={styles.trackingText}>
                 {" "}
-                 Lịch sử đơn hàng
+                Lịch sử đơn hàng
               </Text>
             </Icon>
           </View>
@@ -177,18 +177,13 @@ export default function HomeTab() {
             }>
             {shipperOrders.length > 0 ? (
               shipperOrders.map((order) => (
-                <View>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      margin: 10,
-                      color: "#62BEB0",
-                    }}
-                  >
-                    Tòa nhà: {order.BuildingName}
-                  </Text>
+                <View style={{ marginLeft: 46 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 46 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 10, color: '#62BEB0' }}>
+                      Tòa nhà: {order.BuildingName}
+                    </Text>
+                    <Icon style={{color:'green'}} name="check-circle" size={20}></Icon>
+                  </View>
                   <Text style={styles.shippingOrderText}>
                     Trạng thái thanh toán: {order.PayingStatus}
                   </Text>
@@ -249,9 +244,9 @@ const styles = StyleSheet.create({
 
   themeText: {
     fontWeight: "bold",
-    textAlign:'left',
+    textAlign: 'left',
     fontSize: 24,
-    marginTop:5
+    marginTop: 5
   },
 
   center: {
