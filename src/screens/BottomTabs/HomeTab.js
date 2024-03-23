@@ -176,8 +176,8 @@ export default function HomeTab() {
               />
             }>
             {shipperOrders.length > 0 ? (
-              shipperOrders.map((order) => (
-                <View style={{ marginLeft: 46 }}>
+              shipperOrders.map((order, index) => (
+                <View style={{ marginLeft: 46 }} key={index}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 46 }}>
                     <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 10, color: '#62BEB0' }}>
                       Tòa nhà: {order.BuildingName}
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: "#ccc",
     width: 360,
-    height: 300,
+    height: 450,
   },
 
   trackingContent: {
@@ -334,4 +334,12 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     marginTop: 20,
   },
+
+  noOrderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
+    color: 'grey',
+  }
 });

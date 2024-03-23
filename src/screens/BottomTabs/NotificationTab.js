@@ -28,35 +28,35 @@ const NotificationTab = () => {
 
   return (
     <View style={styles.container}>
-    <Text style={styles.header}>Danh sách thông báo</Text>
-    <Image
-      source={require('../../../assets/images/image-noti.png')}
-      style={styles.shipperImage}
-      resizeMode="cover" 
-    />
-    <ScrollView
-      refreshControl={
-        <RefreshControl
-          refreshing={isRefreshing}
-          onRefresh={onRefresh}
-        />
-      }
-      contentContainerStyle={styles.scrollViewContent}>
-      {notifications && notifications.length > 0 ? (
-        notifications.map((noti) => (
-          <TouchableOpacity key={noti.id} style={styles.card}>
-            <Text style={styles.notificationTitle}>{noti.message}</Text>
-            <Text style={styles.notificationDate}>
-              {moment.utc(noti.date).format('DD/MM/YYYY - HH:mm')}
-            </Text>
-          </TouchableOpacity>
-        ))
-      ) : (
-        <Text>Chưa có thông báo nào dành cho bạn!</Text>
-      )}
-    </ScrollView>
-  </View>
-  
+      <Text style={styles.header}>Danh sách thông báo</Text>
+      <Image
+        source={require('../../../assets/images/image-noti.png')}
+        style={styles.shipperImage}
+        resizeMode="cover"
+      />
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+          />
+        }
+        contentContainerStyle={styles.scrollViewContent}>
+        {notifications && notifications.length > 0 ? (
+          notifications.map((noti) => (
+            <TouchableOpacity key={noti.id} style={styles.card}>
+              <Text style={styles.notificationTitle}>{noti.message}</Text>
+              <Text style={styles.notificationDate}>
+                {moment.utc(noti.date).format('DD/MM/YYYY - HH:mm')}
+              </Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text>Chưa có thông báo nào dành cho bạn!</Text>
+        )}
+      </ScrollView>
+    </View>
+
 
   );
 }
@@ -65,7 +65,7 @@ const NotificationTab = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
+    marginTop: 40,
     padding: 10,
     backgroundColor: '#fff',
   },
@@ -76,7 +76,8 @@ const styles = StyleSheet.create({
     width: 330,
     padding: 20,
     marginBottom: 10,
-    marginTop:4,
+    marginLeft: 14,
+    marginTop: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -84,17 +85,17 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   header: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: 'bold',
     marginBottom: 10,
     marginTop: 56,
     color: '#E84D2C',
-    textAlign: 'center', 
+    textAlign: 'center',
   },
   shipperImage: {
-    width: '90%', 
-    height: 160, 
-    marginBottom: 30, 
+    width: '90%',
+    height: 160,
+    marginBottom: 30,
   },
   scrollViewContent: {
     flexGrow: 1,
@@ -121,8 +122,8 @@ const styles = StyleSheet.create({
     top: 100,
   },
   header: {
-    fontSize: 23,
-    color:'#E84D2C',
+    fontSize: 19,
+    color: '#E84D2C',
     fontWeight: 'bold',
     marginBottom: 10,
   },
@@ -132,8 +133,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
-    backgroundColor: '#fff', 
-    shadowColor: '#000', 
+    backgroundColor: '#fff',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -142,12 +143,12 @@ const styles = StyleSheet.create({
   notificationTitle: {
     fontSize: 17,
     marginBottom: 5,
-    color: '#333', 
+    color: '#333',
   },
   notificationDate: {
     fontSize: 12,
     marginBottom: 5,
-    color: '#666', 
+    color: '#666',
   },
   markAsReadButton: {
     color: 'blue',

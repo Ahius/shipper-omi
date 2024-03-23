@@ -53,7 +53,8 @@ const HistoryTab = () => {
           <Text style={[styles.buttonText, selectedStatus === 'Paid' && styles.selectedButtonText]}>Đang vận chuyển</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.cardsContainer}
         refreshControl={
           <RefreshControl
